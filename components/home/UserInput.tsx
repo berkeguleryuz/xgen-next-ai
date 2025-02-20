@@ -55,7 +55,9 @@ const UserInput = () => {
 
   return (
     <div className="bg-transparent border border-lime-500/10 shadow-inner shadow-lime-500/10 transition-all duration-300 p-4 rounded-lg">
-      <h2 className="text-3xl font-bold pb-2 decoration-dashed decoration-lime-500">User Input</h2>
+      <h2 className="text-3xl font-bold pb-2 decoration-dashed decoration-lime-500">
+        User Input
+      </h2>
       <Separator className="my-4 border-lime-500/10 divide-dashed decoration-dashed dashed decoration-slice" />
       <div className="relative flex flex-col gap-4">
         <Form {...form}>
@@ -69,10 +71,14 @@ const UserInput = () => {
                   <FormItem>
                     <FormLabel>Model</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input
+                        placeholder="llama3-8b"
+                        {...field}
+                        className="bg-transparent"
+                      />
                     </FormControl>
                     <FormDescription>
-                      This is your public display name.
+                      This is the model you want to use.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
