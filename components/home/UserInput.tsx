@@ -218,7 +218,7 @@ const UserInput = () => {
                       <FormControl>
                         <Textarea
                           {...field}
-                          className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[8rem]"
+                          className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[11rem]"
                           placeholder="You can explain yourself and/or add your sample post here and we will use it to generate your content"
                         />
                       </FormControl>

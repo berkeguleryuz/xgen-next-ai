@@ -25,7 +25,7 @@ const UserOutput = () => {
         <Separator className="my-4 border-lime-500/10 divide-dashed decoration-dashed dashed decoration-slice" />
         <div className="relative flex flex-col gap-4">
           <div>
-            <fieldset className="grid gap-6 rounded-[8px] border bg-lime-500/10 min-h-[620px] border-lime-500/10 p-4">
+            <fieldset className="grid gap-6 rounded-[8px] border bg-lime-500/10 min-h-[660px] border-lime-500/10 p-4">
               <legend className="text-lg font-bold">Model Output</legend>
               <div className="flex flex-col gap-4">
                 {loading ? (
