@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,8 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 import {
   Select,
@@ -24,10 +22,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DeepSeekIcon, MetaIcon, MistralIcon } from "@/assets/icon/home-icons";
-import { Slider } from "../ui/slider";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { InfoIcon } from "lucide-react";
-import { Textarea } from "../ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   model: z.string().min(1, "Username must be at least 2 characters."),
@@ -161,6 +166,7 @@ const UserInput = () => {
                             onValueChange={onChange}
                           />
                         </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -177,24 +183,140 @@ const UserInput = () => {
                 <FormField
                   control={form.control}
                   name="content"
-                  render={({ field: { onChange, value } }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex justify-between items-center">
                         About You
                       </FormLabel>
                       <FormControl>
                         <Textarea
-                          defaultValue={value}
-                          className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                          onChange={onChange}
-                          placeholder="Tell us about yourself"
+                          {...field}
+                          className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[8rem]"
+                          placeholder="Add your sample post or bio here and we will use it to generate your content"
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex justify-between items-center">
+                        Type
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
+                        <FormControl className="bg-transparent">
+                          <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                            <SelectValue placeholder="Select a type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-lime-50 font-semibold">
+                          <SelectItem
+                            value="personal"
+                            className="focus:bg-lime-500/70">
+                            Personal
+                          </SelectItem>
+                          <SelectItem
+                            value="brand"
+                            className="focus:bg-lime-500/70">
+                            Brand
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="tone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex justify-between items-center">
+                        Tone
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
+                        <FormControl className="bg-transparent">
+                          <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                            <SelectValue placeholder="Select a tone" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-lime-50 font-semibold">
+                          <SelectItem
+                            value="friendly"
+                            className="focus:bg-lime-500/70">
+                            Friendly
+                          </SelectItem>
+                          <SelectItem
+                            value="professional"
+                            className="focus:bg-lime-500/70">
+                            Professional
+                          </SelectItem>
+                          <SelectItem
+                            value="casual"
+                            className="focus:bg-lime-500/70">
+                            Casual
+                          </SelectItem>
+                          <SelectItem
+                            value="formal"
+                            className="focus:bg-lime-500/70">
+                            Formal
+                          </SelectItem>
+                          <SelectItem
+                            value="technical"
+                            className="focus:bg-lime-500/70">
+                            Technical
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-3">
+                <FormField
+                  control={form.control}
+                  name="emojis"
+                  render={({ field }) => (
+                    <FormItem className="flex justify-between items-center">
+                      <FormLabel className="flex gap-2 items-center">
+                        <span>Emojis 🎢</span>{" "}
+                        <p
+                          className={cn(
+                            field.value ? "text-lime-500" : "text-red-500",
+                            "text-xs",
+                          )}>
+                          {field.value ? "[Active]" : "[Disabled]"}
+                        </p>
+                      </FormLabel>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="bg-lime-500/10 border-lime-500/10"
+                      />
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
             </fieldset>
+            <Button
+              type="submit"
+              className="w-full bg-lime-600 hover:bg-lime-700">
+              Generate
+            </Button>
           </form>
         </Form>
       </div>
