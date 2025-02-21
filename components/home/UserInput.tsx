@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,6 +15,19 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "../ui/separator";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DeepSeekIcon, MetaIcon, MistralIcon } from "@/assets/icon/home-icons";
+import { Slider } from "../ui/slider";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { InfoIcon } from "lucide-react";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
   model: z.string().min(1, "Username must be at least 2 characters."),
@@ -61,31 +73,128 @@ const UserInput = () => {
       <Separator className="my-4 border-lime-500/10 divide-dashed decoration-dashed dashed decoration-slice" />
       <div className="relative flex flex-col gap-4">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid w-full items-start gap-6">
             <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
-              <legend className="text-lg font-bold">Model Settings</legend>
-              <FormField
-                control={form.control}
-                name="model"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Model</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="llama3-8b"
-                        {...field}
-                        className="bg-transparent"
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      This is the model you want to use.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <legend className="text-lg font-bold text-right">
+                Model Settings
+              </legend>
+              <div className="grid gap-3">
+                <FormField
+                  control={form.control}
+                  name="model"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Model</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}>
+                        <FormControl className="bg-transparent">
+                          <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                            <SelectValue placeholder="Select a model" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-lime-50 font-semibold">
+                          <SelectItem
+                            value="llama3-8b-8192"
+                            className="focus:bg-lime-500/70 flex">
+                            <div className="flex items-center gap-2">
+                              <MetaIcon className="w-4 h-4" />
+                              <p>Meta LLama</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="deepseek-r1-distill-qwen-32b"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <DeepSeekIcon className="w-4 h-4" />
+                              <p>DeepSeek</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="mixtral-8x7b-32768"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <MistralIcon className="w-4 h-4" />
+                              <p>Mistral</p>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="grid gap-3">
+                  <FormField
+                    control={form.control}
+                    name="temperature"
+                    render={({ field: { onChange, value } }) => (
+                      <FormItem>
+                        <FormLabel className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <span>Creativity</span>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <InfoIcon className="w-4 h-4 text-lime-500" />
+                              </TooltipTrigger>
+                              <TooltipContent
+                                sideOffset={4}
+                                side="bottom"
+                                className="bg-lime-950 text-white font-normal"
+                                collisionPadding={20}>
+                                <p>This is the creativity of the model.</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                          <span className="">{value}</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Slider
+                            defaultValue={[1]}
+                            max={2}
+                            min={0}
+                            step={0.1}
+                            className="w-full"
+                            onValueChange={onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </fieldset>
-            <Button type="submit">Submit</Button>
+
+            <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
+              <legend className="text-right text-lg font-bold">
+                User Settings
+              </legend>
+
+              <div className="grid gap-3">
+                <FormField
+                  control={form.control}
+                  name="content"
+                  render={({ field: { onChange, value } }) => (
+                    <FormItem>
+                      <FormLabel className="flex justify-between items-center">
+                        About You
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          defaultValue={value}
+                          className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                          onChange={onChange}
+                          placeholder="Tell us about yourself"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </fieldset>
           </form>
         </Form>
       </div>

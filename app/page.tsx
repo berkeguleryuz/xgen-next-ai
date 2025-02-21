@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <main className="relative h-full w-full text-white">
       <HeroSection />
-      <div className="grid grid-cols-2 gap-24 container mx-auto">
+      <div className="grid md:grid-cols-2 gap-24 container mx-auto">
         <UserInput />
         <UserOutput />
       </div>
