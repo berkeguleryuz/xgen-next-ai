@@ -33,6 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { generateBio } from "@/utils/actions";
 
 const formSchema = z.object({
   model: z.string().min(1, "Username must be at least 2 characters."),
@@ -66,8 +67,29 @@ const UserInput = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+
+    const userInputValues = `
+    User Input: ${values.content}
+    Tone: ${values.tone}
+    Type: ${values.type}
+    Add Emojis: ${values.emojis}
+    `;
+
+    try {
+      const { data } = await generateBio(
+        userInputValues,
+        values.temperature,
+        values.model,
+      );
+
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(userInputValues);
   }
 
   return (
@@ -163,7 +185,9 @@ const UserInput = () => {
                             min={0}
                             step={0.1}
                             className="w-full"
-                            onValueChange={onChange}
+                            onValueChange={(value) => {
+                              onChange(value[0]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
