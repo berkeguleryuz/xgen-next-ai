@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import { TooltipProvider } from "@/components/ui/tooltip";
-
+import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,6 +32,29 @@ export default function RootLayout({
         <TooltipProvider>
           <Navbar />
           {children}
+          <Toaster
+            position="top-center"
+            toastOptions={{
+              success: {
+                duration: 2000,
+                icon: "👏",
+              },
+              error: {
+                duration: 2000,
+                icon: "⁉️",
+              },
+              style: {
+                background: "rgb(62, 92, 20)",
+                color: "#fff",
+                borderRadius: "10px",
+                fontSize: "16px",
+                fontWeight: "semibold",
+                textAlign: "center",
+                padding: "10px",
+                boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)",
+              },
+            }}
+          />
         </TooltipProvider>
       </body>
     </html>

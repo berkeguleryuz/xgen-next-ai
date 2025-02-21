@@ -3,12 +3,13 @@ import React, { useContext } from "react";
 
 import { Separator } from "../ui/separator";
 import { BorderBeam } from "../ui/border-beam";
-import { BioContext } from "@/context/BioContext";
+import { PostContext } from "@/context/PostContext";
 import { Skeleton } from "../ui/skeleton";
 import { MessageCircleDashed } from "lucide-react";
+import CopyButton from "./CopyButton";
 
 const UserOutput = () => {
-  const { output, loading } = useContext(BioContext);
+  const { output, loading } = useContext(PostContext);
 
   return (
     <div className="relative border border-lime-500/10 shadow-inner shadow-lime-500/10 transition-all duration-300 p-4 rounded-lg">
@@ -26,16 +27,22 @@ const UserOutput = () => {
           <div>
             <fieldset className="grid gap-6 rounded-[8px] border bg-lime-500/10 min-h-[620px] border-lime-500/10 p-4">
               <legend className="text-lg font-bold">Model Output</legend>
-              <div>
+              <div className="flex flex-col gap-4">
                 {loading ? (
                   <Skeleton className="w-full h-full z-10 bg-lime-500/10" />
                 ) : output?.data?.length ? (
-                  <ul className="flex flex-col space-y-12">
+                  <ul className="flex flex-col space-y-8">
                     {output.data.map((item, index) => (
                       <li
-                        className="text-sm bg-lime-500/30 p-2 rounded-md"
+                        className="text-sm flex flex-col bg-lime-800 py-2 px-4 rounded-l-md rounded-tr-md relative"
                         key={index}>
-                        {item.bio}
+                        {item.post}
+                        <span
+                          className={`absolute top-[95%] ${
+                            index % 2 === 1 ? "right-0" : "left-0"
+                          }`}>
+                          <CopyButton text={item.post} />
+                        </span>
                       </li>
                     ))}
                   </ul>

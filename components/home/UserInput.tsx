@@ -33,8 +33,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { generateBio } from "@/utils/actions";
-import { BioContext } from "@/context/BioContext";
+import { generatePost } from "@/utils/actions";
+import { PostContext } from "@/context/PostContext";
 
 const formSchema = z.object({
   model: z.string().min(1, "Username must be at least 2 characters."),
@@ -68,7 +68,7 @@ const UserInput = () => {
     },
   });
 
-  const { setOutput, setLoading, loading } = useContext(BioContext);
+  const { setOutput, setLoading, loading } = useContext(PostContext);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -81,7 +81,7 @@ const UserInput = () => {
     `;
 
     try {
-      const { data } = await generateBio(
+      const { data } = await generatePost(
         userInputValues,
         values.temperature,
         values.model,
@@ -219,7 +219,7 @@ const UserInput = () => {
                         <Textarea
                           {...field}
                           className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[8rem]"
-                          placeholder="Add your sample post or bio here and we will use it to generate your content"
+                          placeholder="You can explain yourself and/or add your sample post here and we will use it to generate your content"
                         />
                       </FormControl>
                       <FormMessage />
