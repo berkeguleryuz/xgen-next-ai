@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -28,11 +28,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, Loader2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { generateBio } from "@/utils/actions";
+import { BioContext } from "@/context/BioContext";
 
 const formSchema = z.object({
   model: z.string().min(1, "Username must be at least 2 characters."),
@@ -66,8 +68,31 @@ const UserInput = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
+  const { setOutput, setLoading, loading } = useContext(BioContext);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+
+    const userInputValues = `
+    User Input: ${values.content}
+    Tone: ${values.tone}
+    Type: ${values.type}
+    Add Emojis: ${values.emojis}
+    `;
+
+    try {
+      const { data } = await generateBio(
+        userInputValues,
+        values.temperature,
+        values.model,
+      );
+
+      setOutput(data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   }
 
   return (
@@ -163,7 +188,9 @@ const UserInput = () => {
                             min={0}
                             step={0.1}
                             className="w-full"
-                            onValueChange={onChange}
+                            onValueChange={(value) => {
+                              onChange(value[0]);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -314,7 +341,9 @@ const UserInput = () => {
             </fieldset>
             <Button
               type="submit"
-              className="w-full bg-lime-600 hover:bg-lime-700">
+              className="font-semibold leading-tight tracking-wider text-white px-12 py-2 rounded-md bg-lime-500/10 border border-lime-500 hover:bg-lime-700 transition-all duration-300 mx-auto text-center"
+              disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
               Generate
             </Button>
           </form>
