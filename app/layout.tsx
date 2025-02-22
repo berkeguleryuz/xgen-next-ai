@@ -27,7 +27,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative bg-neutral-950`}>
-        <div className="absolute top-0 z-[-2] opacity-50 h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_70%_60%_at_50%_-20%,rgba(64,203,90,0.8),rgba(255,255,255,0))]" />
+        <div
+          className="absolute top-0 z-[-2] opacity-50 h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_70%_60%_at_50%_-20%,rgba(64,203,90,0.8),rgba(255,255,255,0))]"
+          suppressHydrationWarning
+        />
         <TooltipProvider>
           {children}
           <Toaster
@@ -40,6 +43,9 @@ export default function RootLayout({
               error: {
                 duration: 2000,
                 icon: "⁉️",
+              },
+              loading: {
+                duration: 2000,
               },
               style: {
                 background: "rgb(62, 92, 20)",

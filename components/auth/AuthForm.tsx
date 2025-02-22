@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import LoginForm from "@/components/auth/LoginForm";
 import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
 import SignupForm from "@/components/auth/SignupForm";
+import { ArrowLeftIcon } from "lucide-react";
 
 const AuthForm = () => {
   const [mode, setMode] = useState("login");
@@ -72,8 +73,9 @@ const AuthForm = () => {
             <div className="flex flex-row justify-between">
               <button
                 onClick={() => setMode("login")}
-                className="text-sm text-neutral-300 p-0 hover:text-lime-500">
-                Already have an account?
+                className="text-sm text-neutral-300 p-0 hover:text-lime-500 flex gap-2 items-center">
+                <ArrowLeftIcon className="w-4 h-4" />
+                Back to login
               </button>
             </div>
           </Fragment>
