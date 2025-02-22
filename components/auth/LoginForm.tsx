@@ -1,5 +1,6 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -14,6 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { toast } from "react-hot-toast";
+import { LoaderCircle, Eye, EyeOff } from "lucide-react";
+import { redirect } from "next/navigation";
+import { login } from "@/utils/auth/auth-actions";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -25,6 +30,9 @@ const formSchema = z.object({
 });
 
 const LoginForm = ({ className }: { className?: string }) => {
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,8 +41,23 @@ const LoginForm = ({ className }: { className?: string }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    toast.loading("Signing up...");
+
+    const formData = new FormData();
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+
+    const { success, error } = await login(formData);
+
+    if (!success) {
+      toast.error(String(error) || "Something went wrong");
+    } else {
+      toast.success("Login successful!");
+      setLoading(false);
+      redirect("/dashboard");
+    }
   }
 
   return (
@@ -65,11 +88,24 @@ const LoginForm = ({ className }: { className?: string }) => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="********"
-                    {...field}
-                    className="text-white font-semibold placeholder:text-neutral-300 bg-lime-500/10 border-none outline-none ring-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="********"
+                      {...field}
+                      className="text-white font-semibold placeholder:text-neutral-300 bg-lime-500/10 border-none outline-none ring-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-white transition-colors">
+                      {showPassword ? (
+                        <EyeOff className="text-lime-700 h-4 w-4" />
+                      ) : (
+                        <Eye className="text-lime-700 h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -77,8 +113,13 @@ const LoginForm = ({ className }: { className?: string }) => {
           />
           <Button
             type="submit"
-            className="w-full bg-lime-600 hover:bg-lime-700">
-            Submit
+            className="w-full bg-lime-600 hover:bg-lime-700"
+            disabled={loading}>
+            {loading ? (
+              <LoaderCircle className="w-4 h-4 animate-spin" />
+            ) : (
+              "Submit"
+            )}
           </Button>
         </form>
       </Form>

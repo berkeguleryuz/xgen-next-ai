@@ -1,6 +1,6 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -8,15 +8,27 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
       <input
         type={type}
         className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          className
+          "flex h-10 w-full rounded-md px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-300",
+          "[&:-webkit-autofill]:transition-[background-color] [&:-webkit-autofill]:duration-[5000s] [&:-webkit-autofill]:ease-in-out",
+          "[&:-webkit-autofill]:[transition-delay:9999s]",
+          "[&:-webkit-autofill]:!bg-lime-500/10",
+          "[&:-webkit-autofill]:!text-white",
+          "[&:-webkit-autofill:hover]:!bg-lime-500/10",
+          "[&:-webkit-autofill:focus]:!bg-lime-500/10",
+          "[&:-webkit-autofill:active]:!bg-lime-500/10",
+          "bg-lime-500/10 text-white",
+          "[&:-webkit-autofill]:shadow-lime-500/10",
+          "[&:-webkit-autofill]:text-white",
+          "[&:-webkit-autofill]:[-webkit-text-fill-color:white]",
+          "[&:-webkit-autofill]:font-bold",
+          className,
         )}
         ref={ref}
         {...props}
       />
-    )
-  }
-)
-Input.displayName = "Input"
+    );
+  },
+);
+Input.displayName = "Input";
 
-export { Input }
+export { Input };

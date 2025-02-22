@@ -1,5 +1,6 @@
+"use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -14,6 +15,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { LoaderCircle } from "lucide-react";
+import toast from "react-hot-toast";
+import { signUp } from "@/utils/auth/auth-actions";
+import { redirect } from "next/navigation";
 
 const passwordValidationRegex = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*_=+-]).{8,}$",
@@ -21,7 +26,7 @@ const passwordValidationRegex = new RegExp(
 
 const formSchema = z
   .object({
-    name: z
+    full_name: z
       .string()
       .min(2, {
         message: "Name is required.",
@@ -57,16 +62,38 @@ const formSchema = z
   });
 
 const SignupForm = ({ className }: { className?: string }) => {
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      full_name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    toast.loading("Signing up...");
+
+    const formData = new FormData();
+    formData.append("full_name", values.full_name);
+    formData.append("email", values.email);
+    formData.append("password", values.password);
+
+    const { success, error } = await signUp(formData);
+
+    if (!success) {
+      toast.error(String(error) || "Something went wrong");
+    } else {
+      toast.success(
+        "Sign up successful! Please check your email for verification.",
+      );
+      setLoading(false);
+      redirect("/login");
+    }
   }
 
   return (
@@ -75,7 +102,7 @@ const SignupForm = ({ className }: { className?: string }) => {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="name"
+            name="full_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Name</FormLabel>
@@ -143,8 +170,10 @@ const SignupForm = ({ className }: { className?: string }) => {
           />
           <Button
             type="submit"
-            className="w-full bg-lime-600 hover:bg-lime-700">
-            Sign Up
+            className="w-full bg-lime-600 hover:bg-lime-700"
+            disabled={loading}>
+            {loading && <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />}
+            {loading ? "Signing up..." : "Sign Up"}
           </Button>
         </form>
       </Form>
