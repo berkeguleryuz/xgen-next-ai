@@ -24,13 +24,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative bg-neutral-950`}>
-        <div
-          className="absolute top-0 z-[-2] opacity-50 h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_70%_60%_at_50%_-20%,rgba(64,203,90,0.8),rgba(255,255,255,0))]"
-          suppressHydrationWarning
-        />
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative bg-neutral-950`}
+        suppressHydrationWarning>
+        <div className="absolute top-0 z-[-2] opacity-50 h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_70%_60%_at_50%_-20%,rgba(64,203,90,0.8),rgba(255,255,255,0))]" />
         <TooltipProvider>
           {children}
           <Toaster
