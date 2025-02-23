@@ -1,16 +1,5 @@
-"use client";
-
 import * as React from "react";
-import {
-  Bot,
-  BotMessageSquare,
-  BrainCircuit,
-  ChevronsUpDown,
-  CreditCard,
-  ImageIcon,
-  LayoutDashboard,
-  Settings,
-} from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import {
@@ -22,46 +11,22 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/server";
+import { NavUser } from "./nav-user";
 
-const data = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Generate Image",
-    url: "/generate-image",
-    icon: Bot,
-  },
-  {
-    title: "Generate Post",
-    url: "/generate-post",
-    icon: BotMessageSquare,
-  },
-  {
-    title: "Train Model",
-    url: "/train-model",
-    icon: BrainCircuit,
-  },
-  {
-    title: "My Generations",
-    url: "/my-generations",
-    icon: ImageIcon,
-  },
-  {
-    title: "Subscriptions",
-    url: "/subscriptions",
-    icon: CreditCard,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-];
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  console.log(data);
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const user = {
+    name: data?.user?.user_metadata?.full_name,
+    email: data?.user?.email || "",
+    // avatar: data?.user?.user_metadata?.avatar_url,
+  };
+
   return (
     <Sidebar collapsible="icon" {...props} className="-z-1">
       <SidebarHeader>
@@ -79,9 +44,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data} />
+        <NavMain />
       </SidebarContent>
-      <SidebarFooter>{/* <NavUser user={data.user} /> */}</SidebarFooter>
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );
