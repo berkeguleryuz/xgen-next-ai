@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,7 +28,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { InfoIcon } from "lucide-react";
+import { InfoIcon, Loader2 } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
@@ -69,6 +69,7 @@ const formSchema = z.object({
 });
 
 const ImageUserInput = () => {
+  const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,9 +85,14 @@ const ImageUserInput = () => {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     console.log(values);
   }
   return (
+    <div className="bg-transparent border border-lime-500/10 shadow-inner shadow-lime-500/10 transition-all duration-300 p-4 rounded-lg">
+    <h2 className="text-3xl font-bold pb-2 decoration-dashed decoration-lime-500">
+      User Input
+    </h2>
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
@@ -307,7 +313,7 @@ const ImageUserInput = () => {
                   <FormControl>
                     <Textarea
                       {...field}
-                      className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[11rem]"
+                      className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[6rem]"
                       placeholder="Enter a prompt to generate an image"
                     />
                   </FormControl>
@@ -508,12 +514,72 @@ const ImageUserInput = () => {
                 />
               </div>
             </div>
+            <FormField
+              control={form.control}
+              name="output_format"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <div className="flex items-center gap-2">
+                      <span>Output Format</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="w-4 h-4 text-lime-500" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          sideOffset={4}
+                          side="bottom"
+                          className="bg-lime-950 text-white font-normal"
+                          collisionPadding={20}>
+                          <p>This is the format of the output image.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value.toString()}>
+                    <FormControl className="bg-transparent">
+                      <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                        <SelectValue placeholder="Select a model" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-lime-50 font-semibold">
+                      <SelectItem
+                        value="webp"
+                        className="focus:bg-lime-500/70 flex">
+                        <div className="flex items-center gap-2">
+                          <p>WEBP</p>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="png" className="focus:bg-lime-500/70">
+                        <div className="flex items-center gap-2">
+                          <p>PNG</p>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="jpg" className="focus:bg-lime-500/70">
+                        <div className="flex items-center gap-2">
+                          <p>JPG</p>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
-        </fieldset>
-
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+          <Button
+              type="submit"
+              className="font-semibold leading-tight tracking-wider text-white px-12 py-2 rounded-md bg-lime-500/10 border border-lime-500 hover:bg-lime-700 transition-all duration-300 mx-auto text-center"
+              disabled={loading}>
+              {loading && <Loader2 className="w-4 h-4 animate-spin" />}
+            Generate
+          </Button>
+          </fieldset>
+        </form>
+      </Form>
+    </div>
   );
 };
 
