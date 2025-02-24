@@ -1,0 +1,520 @@
+"use client";
+import React from "react";
+
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { InfoIcon } from "lucide-react";
+import { Textarea } from "../ui/textarea";
+
+const formSchema = z.object({
+  model: z.string({
+    required_error: "Model is required",
+  }),
+  prompt: z.string({
+    required_error: "Prompt is required",
+  }),
+  guidance: z
+    .number({
+      required_error: "Guidance is required",
+    })
+    .min(3, { message: "Guidance must be at least 3" })
+    .max(5, { message: "Guidance must be less than 5" }),
+  num_outputs: z
+    .number()
+    .min(1, { message: "Number of outputs must be at least 1" })
+    .max(4, { message: "Number of outputs must be less than 4" }),
+  aspect_ratio: z.string({
+    required_error: "Aspect ratio is required",
+  }),
+  output_format: z.string({
+    required_error: "Output format is required",
+  }),
+  output_quality: z
+    .number({
+      required_error: "Output quality is required",
+    })
+    .min(80, { message: "Output quality must be at least 80" })
+    .max(100, { message: "Output quality must be less than 100" }),
+  num_inference_steps: z
+    .number({
+      required_error: "Number of inference steps is required",
+    })
+    .min(1, { message: "Number of inference steps must be at least 1" })
+    .max(50, { message: "Number of inference steps must be less than 50" }),
+});
+
+const ImageUserInput = () => {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      model: "black-forest-labs/flux-dev",
+      prompt: "",
+      guidance: 3.5,
+      num_outputs: 1,
+      output_format: "webp",
+      aspect_ratio: "1:1",
+      output_quality: 80,
+      num_inference_steps: 28,
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+  }
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="grid w-full items-start gap-6">
+        <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
+          <legend className="text-lg font-bold text-right">
+            Model Settings
+          </legend>
+          <div className="flex flex-col gap-4">
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    <div className="flex items-center gap-2">
+                      <span>Model</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="w-4 h-4 text-lime-500" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          sideOffset={4}
+                          side="bottom"
+                          className="bg-lime-950 text-white font-normal"
+                          collisionPadding={20}>
+                          <p>
+                            This is the model you want to use to generate the
+                            image.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}>
+                    <FormControl className="bg-transparent">
+                      <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                        <SelectValue placeholder="Select a model" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-lime-50 font-semibold">
+                      <SelectItem
+                        value="black-forest-labs/flux-dev"
+                        className="focus:bg-lime-500/70 flex">
+                        <div className="flex items-center gap-2">
+                          <p>Flux Dev</p>
+                        </div>
+                      </SelectItem>
+                      <SelectItem
+                        value="black-forest-labs/flux-schnell"
+                        className="focus:bg-lime-500/70">
+                        <div className="flex items-center gap-2">
+                          <p>Flux Schnell</p>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="guidance"
+              render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span>Guidance</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="w-4 h-4 text-lime-500" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          sideOffset={4}
+                          side="bottom"
+                          className="bg-lime-950 text-white font-normal"
+                          collisionPadding={20}>
+                          <p>
+                            This is the guidance of the model. It is a
+                            multiplier for the prompt.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <span className="">{value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      defaultValue={[3.5]}
+                      max={5}
+                      min={3}
+                      step={0.1}
+                      className="w-full"
+                      onValueChange={(value) => {
+                        onChange(value[0]);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="num_inference_steps"
+              render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span>Number of Inference Steps</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="w-4 h-4 text-lime-500" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          sideOffset={4}
+                          side="bottom"
+                          className="bg-lime-950 text-white font-normal"
+                          collisionPadding={20}>
+                          <p>
+                            This is the number of inference steps of the model.
+                            It is a multiplier for the prompt.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <span className="">{value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      defaultValue={[28]}
+                      max={50}
+                      min={1}
+                      step={1}
+                      className="w-full"
+                      onValueChange={(value) => {
+                        onChange(value[0]);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="output_quality"
+              render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span>Output Quality</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="w-4 h-4 text-lime-500" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          sideOffset={4}
+                          side="bottom"
+                          className="bg-lime-950 text-white font-normal"
+                          collisionPadding={20}>
+                          <p>
+                            This is the quality of the output image. It is a
+                            multiplier for the prompt.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <span className="">{value}</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Slider
+                      defaultValue={[80]}
+                      max={100}
+                      min={80}
+                      step={1}
+                      className="w-full"
+                      onValueChange={(value) => {
+                        onChange(value[0]);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="prompt"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span>Prompt</span>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <InfoIcon className="w-4 h-4 text-lime-500" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                          sideOffset={4}
+                          side="bottom"
+                          className="bg-lime-950 text-white font-normal"
+                          collisionPadding={20}>
+                          <p>
+                            That is the prompt that will be used to generate the
+                            image.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      {...field}
+                      className="w-full bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 min-h-[11rem]"
+                      placeholder="Enter a prompt to generate an image"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex flex-row justify-between gap-6">
+              <div className="w-full">
+                <FormField
+                  control={form.control}
+                  name="num_outputs"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <div className="flex items-center gap-2">
+                          <span>Number of Outputs</span>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <InfoIcon className="w-4 h-4 text-lime-500" />
+                            </TooltipTrigger>
+                            <TooltipContent
+                              sideOffset={4}
+                              side="bottom"
+                              className="bg-lime-950 text-white font-normal"
+                              collisionPadding={20}>
+                              <p>
+                                This is the number of images you want to
+                                generate.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value.toString()}>
+                        <FormControl className="bg-transparent">
+                          <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                            <SelectValue placeholder="Select a model" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-lime-50 font-semibold">
+                          <SelectItem
+                            value="1"
+                            className="focus:bg-lime-500/70 flex">
+                            <div className="flex items-center gap-2">
+                              <p>1</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="black-forest-labs/flux-schnell"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>2</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="3"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>3</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="4"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>4</p>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="w-full">
+                <FormField
+                  control={form.control}
+                  name="aspect_ratio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <div className="flex items-center gap-2">
+                          <span>Aspect Ratio</span>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <InfoIcon className="w-4 h-4 text-lime-500" />
+                            </TooltipTrigger>
+                            <TooltipContent
+                              sideOffset={4}
+                              side="bottom"
+                              className="bg-lime-950 text-white font-normal"
+                              collisionPadding={20}>
+                              <p>
+                                This is the aspect ratio of the image you want
+                                to generate.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </div>
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value.toString()}>
+                        <FormControl className="bg-transparent">
+                          <SelectTrigger className="bg-transparent border-lime-500/10 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-lime-500/10 active:ring-0 active:ring-offset-0 hover:bg-lime-500/10">
+                            <SelectValue placeholder="Select a model" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-lime-50 font-semibold">
+                          <SelectItem
+                            value="1:1"
+                            className="focus:bg-lime-500/70 flex">
+                            <div className="flex items-center gap-2">
+                              <p>1:1</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="16:9"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>16:9</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="21:9"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>21:9</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="3:2"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>3:2</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="2:3"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>2:3</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="4:5"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>4:5</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="5:4"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>5:4</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="3:4"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>3:4</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="4:3"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>4:3</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="9:16"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>9:16</p>
+                            </div>
+                          </SelectItem>
+                          <SelectItem
+                            value="9:21"
+                            className="focus:bg-lime-500/70">
+                            <div className="flex items-center gap-2">
+                              <p>9:21</p>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+};
+
+export default ImageUserInput;
