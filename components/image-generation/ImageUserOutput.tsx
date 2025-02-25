@@ -1,30 +1,34 @@
 "use client";
 import React, { useState } from "react";
 import { BorderBeam } from "@/components/ui/border-beam";
-import { MessageCircleDashed } from "lucide-react";
+import { LoaderCircleIcon, MessageCircleDashed } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import useGeneratedStore from "@/store/useGeneratedStore";
 
-const images = [
-  {
-    src: "/logo.png",
-    alt: "xGen",
-  },
-  {
-    src: "/logow.png",
-    alt: "xGen",
-  },
-  {
-    src: "/logob.png",
-    alt: "xGen",
-  },
-  {
-    src: "/login.avif",
-    alt: "xGen",
-  },
-];
+// const images = [
+//   {
+//     src: "/logo.png",
+//     alt: "xGen",
+//   },
+//   {
+//     src: "/logow.png",
+//     alt: "xGen",
+//   },
+//   {
+//     src: "/logob.png",
+//     alt: "xGen",
+//   },
+//   {
+//     src: "/login.avif",
+//     alt: "xGen",
+//   },
+// ];
 
 const ImageUserOutput = () => {
+  const images = useGeneratedStore((state) => state.images);
+  const loading = useGeneratedStore((state) => state.loading);
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextImage = () => {
@@ -51,8 +55,8 @@ const ImageUserOutput = () => {
                 <div className="relative w-full h-full flex items-center justify-center">
                   <div className="relative max-w-[700px] max-h-[700px] rounded-lg">
                     <Image
-                      src={images[currentIndex].src}
-                      alt={images[currentIndex].alt}
+                      src={images[currentIndex].url}
+                      alt={"Generated Image xGen"}
                       width={480}
                       height={480}
                       className="object-contain rounded-lg"

@@ -1,12 +1,12 @@
 "use client";
 import React, { useContext } from "react";
 
-import { Separator } from "../ui/separator";
-import { BorderBeam } from "../ui/border-beam";
+import { Separator } from "../../ui/separator";
+import { BorderBeam } from "../../ui/border-beam";
 import { PostContext } from "@/context/PostContext";
-import { Skeleton } from "../ui/skeleton";
+import { Skeleton } from "../../ui/skeleton";
 import { MessageCircleDashed } from "lucide-react";
-import CopyButton from "./CopyButton";
+import CopyButton from "../CopyButton";
 
 const UserOutput = () => {
   const { output, loading } = useContext(PostContext);
