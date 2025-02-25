@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { BorderBeam } from "@/components/ui/border-beam";
-import { LoaderCircleIcon, MessageCircleDashed } from "lucide-react";
+import { MessageCircleDashed } from "lucide-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import useGeneratedStore from "@/store/useGeneratedStore";
@@ -27,7 +27,7 @@ import useGeneratedStore from "@/store/useGeneratedStore";
 
 const ImageUserOutput = () => {
   const images = useGeneratedStore((state) => state.images);
-  const loading = useGeneratedStore((state) => state.loading);
+  // const loading = useGeneratedStore((state) => state.loading);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
