@@ -50,14 +50,12 @@ function useSidebar() {
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
-    defaultOpen?: boolean;
     open?: boolean;
     onOpenChange?: (open: boolean) => void;
   }
 >(
   (
     {
-      defaultOpen = true,
       open: openProp,
       onOpenChange: setOpenProp,
       className,
@@ -70,9 +68,25 @@ const SidebarProvider = React.forwardRef<
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
 
-    // This is the internal state of the sidebar.
-    // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen);
+    const [isLargeScreen, setIsLargeScreen] = React.useState(false);
+
+    React.useEffect(() => {
+      const checkScreenSize = () => {
+        setIsLargeScreen(window.innerWidth >= 1280);
+      };
+
+      checkScreenSize();
+      window.addEventListener("resize", checkScreenSize);
+
+      return () => window.removeEventListener("resize", checkScreenSize);
+    }, []);
+
+    const [_open, _setOpen] = React.useState(isLargeScreen);
+
+    React.useEffect(() => {
+      _setOpen(isLargeScreen);
+    }, [isLargeScreen]);
+
     const open = openProp ?? _open;
     const setOpen = React.useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
@@ -149,7 +163,7 @@ const SidebarProvider = React.forwardRef<
               } as React.CSSProperties
             }
             className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
+              "flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
               className,
             )}
             ref={ref}
@@ -324,8 +338,6 @@ const SidebarInset = React.forwardRef<
     <main
       ref={ref}
       className={cn(
-        "relative flex min-h-svh flex-1 flex-col",
-        "peer-data-[variant=inset]:min-h-[calc(100svh-theme(spacing.4))] md:peer-data-[variant=inset]:m-2 md:peer-data-[state=collapsed]:peer-data-[variant=inset]:ml-2 md:peer-data-[variant=inset]:ml-0 md:peer-data-[variant=inset]:rounded-xl md:peer-data-[variant=inset]:shadow",
         className,
       )}
       {...props}
@@ -583,9 +595,11 @@ const SidebarMenuButton = React.forwardRef<
       <Tooltip>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
         <TooltipContent
+          className="bg-lime-950 text-white font-medium inline-flex items-center"
           side="right"
           align="center"
           hidden={state !== "collapsed" || isMobile}
+          sideOffset={8}
           {...tooltip}
         />
       </Tooltip>
