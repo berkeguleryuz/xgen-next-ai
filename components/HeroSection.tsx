@@ -20,7 +20,7 @@ const HeroSection = () => {
       </p>
       <div className="flex flex-row gap-4 mt-4">
         <Link
-          href={"/application"}
+          href={"/dashboard"}
           className="text-white px-6 py-2 rounded-md bg-lime-500/10 border border-lime-500 hover:bg-transparent transition-all duration-300">
           <h1 className="text-sm font-bold">Get Started</h1>
         </Link>
