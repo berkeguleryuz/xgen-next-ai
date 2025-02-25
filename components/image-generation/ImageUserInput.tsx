@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/tooltip";
 import { InfoIcon, Loader2 } from "lucide-react";
 import { Textarea } from "../ui/textarea";
-import { generateImage } from "@/utils/image-actions";
+import useGeneratedStore from "@/store/useGeneratedStore";
 
 export const imageGenerationFormSchema = z.object({
   model: z.string({
@@ -70,6 +70,7 @@ export const imageGenerationFormSchema = z.object({
 });
 
 const ImageUserInput = () => {
+  const generateImage = useGeneratedStore((state) => state.generateImage);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof imageGenerationFormSchema>>({
     resolver: zodResolver(imageGenerationFormSchema),
@@ -106,12 +107,8 @@ const ImageUserInput = () => {
 
   async function onSubmit(values: z.infer<typeof imageGenerationFormSchema>) {
     setLoading(true);
-    const { error, success, data } = await generateImage(values);
-    if (success) {
-      console.log(error, success, data);
-    } else {
-      console.error(error);
-    }
+    await generateImage(values);
+    
     setLoading(false);
   }
   return (
