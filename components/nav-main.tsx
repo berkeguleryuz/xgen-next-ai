@@ -43,7 +43,7 @@ const navItems = [
     title: "My Generations",
     url: "/my-generations",
     icon: ImageIcon,
-  }
+  },
 ];
 
 export function NavMain() {
