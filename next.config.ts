@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: "replicate.delivery",
         pathname: '**',
       },
+      {
+        protocol: "https",
+        hostname: "vvgsrinygnwtqbnqtgvc.supabase.co",
+        pathname: "**",
+      },
     ],
   },
 };
