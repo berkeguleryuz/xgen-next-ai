@@ -18,7 +18,6 @@ export async function AppSidebar({
 }: React.ComponentProps<typeof Sidebar>) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
-  console.log(data);
 
   const user = {
     name: data?.user?.user_metadata?.full_name,

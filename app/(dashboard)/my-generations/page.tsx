@@ -1,9 +1,34 @@
+"use client";
+
 import Gallery from "@/components/my-generations/Gallery";
 import { getImages } from "@/utils/image-actions";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Tables } from "@/database.types";
 
-const MyGenerationsPage = async () => {
-  const { data: images } = await getImages();
+type ImageProps = {
+  url: string | undefined;
+} & Tables<"generated_images">;
+
+const MyGenerationsPage = () => {
+  const [images, setImages] = useState<ImageProps[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      setLoading(true);
+      const { data } = await getImages();
+      setImages(data || []);
+      setLoading(false);
+    };
+
+    fetchImages();
+  }, []);
+
+  const handleImageDeleted = (deletedImageId: number) => {
+    setImages((prevImages) => 
+      prevImages.filter((image) => Number(image.id) !== deletedImageId)
+    );
+  };
 
   return (
     <section className="py-4 w-full h-full">
@@ -12,7 +37,17 @@ const MyGenerationsPage = async () => {
         Here you can view all the images you have generated.
       </p>
       <span>Click on an image to view it.</span>
-      <Gallery images={images || []} />
+      
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-lime-500"></div>
+        </div>
+      ) : (
+        <Gallery 
+          images={images} 
+          onImageDeleted={handleImageDeleted} 
+        />
+      )}
     </section>
   );
 };

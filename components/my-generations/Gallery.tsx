@@ -3,6 +3,9 @@ import { Tables } from "@/database.types";
 import Image from "next/image";
 import React, { useState } from "react";
 import { Download, Trash, X, AlertTriangle } from "lucide-react";
+import toast from "react-hot-toast";
+import { deleteImage } from "@/utils/image-actions";
+import Link from "next/link";
 
 type ImageProps = {
   url: string | undefined;
@@ -10,7 +13,7 @@ type ImageProps = {
 
 interface GalleryProps {
   images: ImageProps[];
-  onDeleteImage?: (id: string) => Promise<boolean>;
+  onImageDeleted?: (deletedImageId: number) => void;
 }
 
 const formatDate = (dateString: string) => {
@@ -22,7 +25,7 @@ const formatDate = (dateString: string) => {
   });
 };
 
-const Gallery = ({ images, onDeleteImage }: GalleryProps) => {
+const Gallery = ({ images, onImageDeleted }: GalleryProps) => {
   const [selectedImage, setSelectedImage] = useState<ImageProps | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -74,6 +77,7 @@ const Gallery = ({ images, onDeleteImage }: GalleryProps) => {
       document.body.removeChild(link);
     } catch (error) {
       console.error("Error downloading image:", error);
+      toast.error("Error downloading image");
     } finally {
       setDownloading(false);
     }
@@ -86,22 +90,32 @@ const Gallery = ({ images, onDeleteImage }: GalleryProps) => {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!selectedImage || !onDeleteImage || deleting) return;
+    if (!selectedImage || deleting) return;
 
     try {
       setDeleting(true);
       setDeleteError(null);
 
-      const success = await onDeleteImage(String(selectedImage.id));
+      const { error, success } = await deleteImage(Number(selectedImage.id));
 
-      if (success) {
+      if (error) {
+        setDeleteError("Failed to delete image. Please try again.");
+        toast.error("Error deleting image");
+      } else if (success) {
+        toast.success("Image deleted successfully");
+        if (onImageDeleted) {
+          onImageDeleted(Number(selectedImage.id));
+        } else {
+          window.location.reload();
+        }
         closeModal();
       } else {
-        setDeleteError("Failed to delete image. Please try again.");
+        toast.error("An error occurred while deleting the image");
       }
     } catch (error) {
       console.error("Error deleting image:", error);
       setDeleteError("An error occurred while deleting the image.");
+      toast.error("An error occurred while deleting the image");
     } finally {
       setDeleting(false);
     }
@@ -109,11 +123,16 @@ const Gallery = ({ images, onDeleteImage }: GalleryProps) => {
 
   if (images.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex flex-col items-center justify-center h-screen gap-2">
         <p className="text-2xl font-bold">No images generated yet</p>
         <p className="text-sm text-gray-500">
           Generate an image to get started
         </p>
+        <Link
+          href="/generate-image"
+          className="text-lime-500 border border-lime-500/30 px-4 py-2 rounded-md hover:text-lime-400 hover:bg-lime-500/10 transition-all duration-300">
+          Generate an image
+        </Link>
       </div>
     );
   }
