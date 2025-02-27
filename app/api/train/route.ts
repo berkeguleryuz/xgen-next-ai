@@ -74,7 +74,18 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    console.log("Training", training);
+    await supabaseAdmin.from("models").insert({
+      model_id: modelId,
+      user_id: user.id,
+      model_name: input.modelName,
+      gender: input.gender,
+      training_status: training.status,
+      trigger_word: "CLDRN",
+      training_steps: 1000,
+      training_id: training.id,
+    });
+
+    // console.log("Training", training);
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
