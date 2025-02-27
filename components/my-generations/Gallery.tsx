@@ -123,7 +123,7 @@ const Gallery = ({ images, onImageDeleted }: GalleryProps) => {
 
   if (images.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen gap-2">
+      <div className="flex flex-col items-center justify-center h-[80vh] gap-2">
         <p className="text-2xl font-bold">No images generated yet</p>
         <p className="text-sm text-gray-500">
           Generate an image to get started

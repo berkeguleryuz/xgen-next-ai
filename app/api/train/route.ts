@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
         destination: `berkeguleryuz/${modelId}`,
         input: {
           steps: 1000,
-          resolution: "512,1024",
+          resolution: "1024",
           input_images: fileUrl.signedUrl,
           trigger_word: "CLDRN",
         },
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    const { data: modelData } = await supabaseAdmin.from("models").insert({
+    await supabaseAdmin.from("models").insert({
       model_id: modelId,
       user_id: user.id,
       model_name: input.modelName,
@@ -84,8 +84,6 @@ export async function POST(request: NextRequest) {
       training_steps: 1000,
       training_id: training.id,
     });
-
-    console.log("Model data", modelData);
 
     // console.log("Training", training);
 

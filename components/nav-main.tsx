@@ -4,6 +4,7 @@ import {
   Bot,
   BotMessageSquare,
   BrainCircuit,
+  Dna,
   ImageIcon,
   LayoutDashboard,
 } from "lucide-react";
@@ -43,6 +44,11 @@ const navItems = [
     title: "My Generations",
     url: "/my-generations",
     icon: ImageIcon,
+  },
+  {
+    title: "My Models",
+    url: "/my-models",
+    icon: Dna,
   },
 ];
 
