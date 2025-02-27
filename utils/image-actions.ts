@@ -222,16 +222,53 @@ export async function deleteImage(id: number) {
     };
   }
 
+  const { data: imageData, error: fetchError } = await supabase
+    .from("generated_images")
+    .select("image_name")
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    return {
+      error: fetchError.message,
+      success: false,
+      data: null,
+    };
+  }
+
+  if (!imageData || !imageData.image_name) {
+    return {
+      error: "Image not found",
+      success: false,
+      data: null,
+    };
+  }
+
   const { data, error } = await supabase
     .from("generated_images")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .select();
 
   if (error) {
     return {
       error: error.message,
       success: false,
       data: null,
+    };
+  }
+
+  const storagePath = `${user.id}/${imageData.image_name}`;
+  const { error: storageError } = await supabase.storage
+    .from("generated_images")
+    .remove([storagePath]);
+
+  if (storageError) {
+    console.error("Failed to delete from storage:", storageError);
+    return {
+      error: "Image deleted from database but failed to delete from storage",
+      success: true,
+      data: data,
     };
   }
 
