@@ -46,7 +46,8 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/api/webhooks/training") // TODO: remove this once we have a proper auth flow / check it maybe is not needed
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
