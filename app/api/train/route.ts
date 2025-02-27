@@ -1,6 +1,11 @@
 import { supabaseAdmin } from "@/utils/supabase/admin";
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import Replicate from "replicate";
+
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,6 +47,34 @@ export async function POST(request: NextRequest) {
 
     console.log("FileUrl", fileUrl);
     console.log("Input", input);
+
+    const modelId = `${user.id}_${Date.now()}_${input.modelName
+      .toLowerCase()
+      .replace(" ", "-")}`;
+
+    await replicate.models.create("berkeguleryuz", modelId, {
+      visibility: "private",
+      hardware: "gpu-a100-large",
+    });
+
+    const training = await replicate.trainings.create(
+      "ostris",
+      "flux-dev-lora-trainer",
+      "b6af14222e6bd9be257cbc1ea4afda3cd0503e1133083b9d1de0364d8568e6ef",
+      {
+        destination: `berkeguleryuz/${modelId}`,
+        input: {
+          steps: 1000,
+          resolution: "512,1024",
+          input_images: fileUrl.signedUrl,
+          trigger_word: "CLDRN",
+        },
+        webhook: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/training`,
+        webhook_events_filter: ["completed"],
+      },
+    );
+
+    console.log("Training", training);
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {
