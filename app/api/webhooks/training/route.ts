@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  console.log("Webhook is working", req);
+  console.log("Webhook is working");
+
   try {
     const body = await req.json();
     console.log("Body", body);
