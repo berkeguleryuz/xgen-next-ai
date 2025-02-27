@@ -21,6 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           "[&:-webkit-autofill]:text-white",
           "[&:-webkit-autofill]:[-webkit-text-fill-color:white]",
           "[&:-webkit-autofill]:font-bold",
+          "file:bg-lime-200 file:text-black file:px-3 file:py-0.5 file:mb-2 file:rounded file:mr-3 file:hover:bg-lime-300 file:transition-colors file:cursor-pointer",
           className,
         )}
         ref={ref}
