@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    await supabaseAdmin.from("models").insert({
+    const { data: modelData } = await supabaseAdmin.from("models").insert({
       model_id: modelId,
       user_id: user.id,
       model_name: input.modelName,
@@ -84,6 +84,8 @@ export async function POST(request: NextRequest) {
       training_steps: 1000,
       training_id: training.id,
     });
+
+    console.log("Model data", modelData);
 
     // console.log("Training", training);
 
