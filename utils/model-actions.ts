@@ -39,3 +39,67 @@ export async function fetchModels() {
     count: count || 0,
   };
 }
+
+export async function deleteModel(
+  id: number,
+  model_id: string,
+  model_version: string,
+) {
+  const supabase = await createClient();
+
+  if (model_version) {
+    try {
+      const res = await fetch(
+        `https://api.replicate.com/v1/models/berkeguleryuz/${model_id}/versions/${model_version}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+          },
+        },
+      );
+      if (!res.ok) {
+        throw new Error("Failed to delete model version");
+      }
+    } catch (error) {
+      console.error("Error deleting model version", error);
+
+      return {
+        error: "Failed to delete model version",
+        success: false,
+      };
+    }
+  }
+
+  if (model_id) {
+    try {
+      const res = await fetch(
+        `https://api.replicate.com/v1/models/berkeguleryuz/${model_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${process.env.REPLICATE_API_TOKEN}`,
+          },
+        },
+      );
+      if (!res.ok) {
+        console.log(res);
+        throw new Error("Failed to delete model " + model_id);
+      }
+    } catch (error) {
+      console.error("Error deleting model", error);
+
+      return {
+        error: "Failed to delete model " + model_id,
+        success: false,
+      };
+    }
+  }
+
+  const { error } = await supabase.from("models").delete().eq("id", id);
+
+  return {
+    error: error?.message,
+    success: !error,
+  };
+}

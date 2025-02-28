@@ -45,8 +45,8 @@ export async function POST(request: NextRequest) {
       throw new Error("Failed to get the file URL");
     }
 
-    console.log("FileUrl", fileUrl);
-    console.log("Input", input);
+    // console.log("FileUrl", fileUrl);
+    // console.log("Input", input);
 
     const modelId = `${user.id}_${Date.now()}_${input.modelName
       .toLowerCase()
@@ -69,7 +69,13 @@ export async function POST(request: NextRequest) {
           input_images: fileUrl.signedUrl,
           trigger_word: "CLDRN",
         },
-        webhook: `${process.env.NEXT_PUBLIC_APP_URL}/api/webhooks/training`,
+        webhook: `${
+          process.env.NEXT_PUBLIC_APP_URL
+        }/api/webhooks/training?userId=${
+          user.id
+        }&modelName=${encodeURIComponent(
+          input.modelName,
+        )}&fileName=${encodeURIComponent(fileName)}`,
         webhook_events_filter: ["completed"],
       },
     );
