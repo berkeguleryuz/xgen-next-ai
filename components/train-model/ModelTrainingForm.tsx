@@ -104,6 +104,7 @@ const ModelTrainingForm = () => {
       const results = await response.json();
 
       if (!response.ok || results.error) {
+        // console.log("Results", results);
         throw new Error(results.error || "Error starting training process");
       }
 

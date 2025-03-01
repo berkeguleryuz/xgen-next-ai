@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     await replicate.models.create("berkeguleryuz", modelId, {
       visibility: "private",
-      hardware: "gpu-a100-large",
+      hardware: "gpu-t4",
     });
 
     const training = await replicate.trainings.create(
