@@ -23,18 +23,40 @@ interface ImageResponse {
 export async function generateImageAction(
   input: z.infer<typeof imageGenerationFormSchema>,
 ): Promise<ImageResponse> {
-  const modelInput = {
-    prompt: input.prompt,
-    go_fast: true,
-    guidance: input.guidance,
-    megapixels: "1",
-    aspect_ratio: input.aspect_ratio,
-    num_images: input.num_outputs,
-    output_format: input.output_format,
-    output_quality: 80,
-    prompt_strength: 0.8,
-    num_inference_steps: input.num_inference_steps,
-  };
+  if (!process.env.REPLICATE_API_TOKEN) {
+    return {
+      error: "REPLICATE_API_TOKEN is not set",
+      success: false,
+      data: null,
+    };
+  }
+
+  const modelInput = input.model.startsWith("berkeguleryuz/")
+    ? {
+        model: `dev`,
+        prompt: input.prompt,
+        lora_scale: 1,
+        guidance: input.guidance,
+        aspect_ratio: input.aspect_ratio,
+        num_images: input.num_outputs,
+        output_format: input.output_format,
+        output_quality: 80,
+        prompt_strength: 0.8,
+        num_inference_steps: input.num_inference_steps,
+        extra_lora_scale: 0,
+      }
+    : {
+        prompt: input.prompt,
+        go_fast: true,
+        guidance: input.guidance,
+        megapixels: "1",
+        aspect_ratio: input.aspect_ratio,
+        num_images: input.num_outputs,
+        output_format: input.output_format,
+        output_quality: 80,
+        prompt_strength: 0.8,
+        num_inference_steps: input.num_inference_steps,
+      };
 
   try {
     const output = await replicate.run(input.model as `${string}/${string}`, {

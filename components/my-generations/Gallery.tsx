@@ -154,7 +154,14 @@ const Gallery = ({ images, onImageDeleted }: GalleryProps) => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4">
                 <p className="text-white text-sm font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 line-clamp-2">
-                  {image.prompt}
+                  {image.prompt &&
+                    (image.prompt.includes("photo of a") &&
+                    image.prompt.includes("CLDRN")
+                      ? image.prompt.replace(
+                          /photo of a (CLDRN|[A-Za-z]+) (man|woman|character)?,\s*/i,
+                          "",
+                        )
+                      : image.prompt)}
                 </p>
                 <div className="flex justify-between items-center mt-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-100">
                   <p className="text-white/80 text-xs">
@@ -215,7 +222,16 @@ const Gallery = ({ images, onImageDeleted }: GalleryProps) => {
               />
             </div>
             <div className="absolute bottom-4 left-0 right-0 bg-black/70 p-4 text-white text-center">
-              <p className="text-sm mb-1">{selectedImage.prompt}</p>
+              <p className="text-sm mb-1">
+                {selectedImage.prompt &&
+                  (selectedImage.prompt.includes("photo of a") &&
+                  selectedImage.prompt.includes("CLDRN")
+                    ? selectedImage.prompt.replace(
+                        /photo of a (CLDRN|[A-Za-z]+) (man|woman|character)?,\s*/i,
+                        "",
+                      )
+                    : selectedImage.prompt)}
+              </p>
               <p className="text-xs text-gray-300">
                 {formatDate(selectedImage.created_at)} •{selectedImage.width}×
                 {selectedImage.height}px

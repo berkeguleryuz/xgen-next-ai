@@ -26,6 +26,7 @@ import {
 import toast from "react-hot-toast";
 import { deleteModel } from "@/utils/model-actions";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 type ModelType = {
   error: string | null;
@@ -180,6 +181,30 @@ const ModelsList = ({ models }: ModelsListProps) => {
               </div>
             </div>
           </CardContent>
+          <div className="p-6 pt-0">
+            <Link
+              href={
+                model.training_status === "succeeded"
+                  ? `/generate-image?model_id=${model.model_id}:${model.version}`
+                  : "#"
+              }
+              className={cn(
+                "inline-flex w-full justify-center items-center gap-2 py-2 px-4 rounded-md bg-lime-500/10 border border-lime-500/20 text-lime-200 hover:text-lime-400 hover:bg-lime-500/20 transition-all duration-300",
+                model.training_status !== "succeeded" &&
+                  "pointer-events-none opacity-50",
+              )}>
+              <div className={``}>
+                {model.training_status === "succeeded" ? (
+                  <span>Generate Image</span>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Not ready yet</span>
+                  </div>
+                )}
+              </div>
+            </Link>
+          </div>
         </Card>
       ))}
     </div>
