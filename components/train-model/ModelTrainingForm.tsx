@@ -94,6 +94,8 @@ const ModelTrainingForm = () => {
       formData.append("modelName", values.modelName);
       formData.append("gender", values.gender);
 
+      toast.loading("Initiating training...");
+
       const response = await fetch("/api/train", {
         method: "POST",
         body: formData,
@@ -102,6 +104,7 @@ const ModelTrainingForm = () => {
       const results = await response.json();
 
       if (!response.ok || results.error) {
+        // console.log("Results", results);
         throw new Error(results.error || "Error starting training process");
       }
 

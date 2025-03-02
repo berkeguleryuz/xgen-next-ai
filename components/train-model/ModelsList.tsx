@@ -1,3 +1,4 @@
+"use client";
 import { Database } from "@/database.types";
 import React from "react";
 import {
@@ -22,6 +23,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import toast from "react-hot-toast";
+import { deleteModel } from "@/utils/model-actions";
+import { useRouter } from "next/navigation";
 
 type ModelType = {
   error: string | null;
@@ -35,6 +39,27 @@ interface ModelsListProps {
 
 const ModelsList = ({ models }: ModelsListProps) => {
   const { data } = models;
+
+  const router = useRouter();
+
+  const handleDeleteModel = async (
+    id: number,
+    model_id: string,
+    model_version: string,
+  ) => {
+    const toastId = toast.loading("Deleting model...");
+
+    const { success, error } = await deleteModel(id, model_id, model_version);
+
+    if (error) {
+      toast.error(error || "Failed to delete model", { id: toastId });
+    }
+
+    if (success) {
+      toast.success("Model deleted successfully", { id: toastId });
+      router.refresh();
+    }
+  };
 
   if (data?.length === 0) {
     return (
@@ -63,28 +88,34 @@ const ModelsList = ({ models }: ModelsListProps) => {
                 {model.model_name}
                 <div className="flex items-center gap-2">
                   <AlertDialog>
-                    <AlertDialogTrigger>
-                      <button className="hover:text-red-500 transition-all duration-300 hover:bg-red-500/10 p-1 px-2 rounded-md">
-                        <Trash className="w-4 h-4" />
-                      </button>
+                    <AlertDialogTrigger className="hover:text-red-500 transition-all duration-300 hover:bg-red-500/10 p-1 px-2 rounded-md">
+                      <Trash className="w-4 h-4" />
                     </AlertDialogTrigger>
                     <AlertDialogContent className="bg-lime-500/10 border border-lime-500/20 text-white">
                       <AlertDialogHeader>
                         <AlertDialogTitle className="text-lime-200">
-                          Are you absolutely sure?
+                          Are you sure you want to delete this model?
                         </AlertDialogTitle>
                         <AlertDialogDescription className="text-white">
                           This action cannot be undone. This will permanently
-                          delete your account and remove your data from our
+                          delete your model and remove your data from our
                           servers.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="text-white bg-red-500/10 border border-red-500/20 hover:bg-red-500/50 transition-all duration-300 hover:text-white">
+                        <AlertDialogCancel className="text-white bg-lime-500/10 border border-lime-500/20 hover:bg-lime-500/50 transition-all duration-300 hover:text-white">
                           Cancel
                         </AlertDialogCancel>
-                        <AlertDialogAction className="text-white bg-lime-500/10 border border-lime-500/20 hover:bg-lime-500/20 transition-all duration-300">
-                          Continue
+                        <AlertDialogAction
+                          className="text-white bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all duration-300"
+                          onClick={() =>
+                            handleDeleteModel(
+                              model.id,
+                              model.model_id || "",
+                              model.version || "",
+                            )
+                          }>
+                          Delete
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>

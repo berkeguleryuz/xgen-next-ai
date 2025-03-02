@@ -18,6 +18,9 @@ const nextConfig: NextConfig = {
   webpack: (config) => {
     config.module.exprContextCritical = false;
     
+    config.module.unknownContextCritical = false;
+    config.module.unknownContextRegExp = /^((?!replicate).)*$/;
+    
     return config;
   },
 };

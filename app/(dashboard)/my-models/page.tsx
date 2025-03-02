@@ -4,7 +4,7 @@ import React from "react";
 
 const MyModelsPage = async () => {
   const data = await fetchModels();
-  console.log(data);
+  // console.log(data);
   return (
     <section className="min-h-screen">
       <div className="flex flex-col p-4 mt-2">
