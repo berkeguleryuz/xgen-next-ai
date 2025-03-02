@@ -31,6 +31,7 @@ import {
 import { InfoIcon, Loader2 } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import useGeneratedStore from "@/store/useGeneratedStore";
+import { Tables } from "@/database.types";
 
 export const imageGenerationFormSchema = z.object({
   model: z.string({
@@ -69,13 +70,20 @@ export const imageGenerationFormSchema = z.object({
     .max(50, { message: "Number of inference steps must be less than 50" }),
 });
 
-const ImageUserInput = () => {
+interface ImageUserInputProps {
+  userModels: Tables<"models">[];
+  model_id?: string;
+}
+
+const ImageUserInput = ({ userModels, model_id }: ImageUserInputProps) => {
   const generateImage = useGeneratedStore((state) => state.generateImage);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof imageGenerationFormSchema>>({
     resolver: zodResolver(imageGenerationFormSchema),
     defaultValues: {
-      model: "black-forest-labs/flux-dev",
+      model: model_id
+        ? `berkeguleryuz/${model_id}`
+        : "black-forest-labs/flux-dev",
       prompt: "",
       guidance: 3.5,
       num_outputs: 1,
@@ -107,8 +115,23 @@ const ImageUserInput = () => {
 
   async function onSubmit(values: z.infer<typeof imageGenerationFormSchema>) {
     setLoading(true);
-    await generateImage(values);
-    
+    const newValues = {
+      ...values,
+      prompt: values.model.startsWith("berkeguleryuz/")
+        ? (() => {
+            const modelId = values.model
+              .replace("berkeguleryuz/", "")
+              .split(":")[0];
+            const selectedModel = userModels.find(
+              (model) => model.model_id === modelId,
+            );
+            return `photo of a ${selectedModel?.trigger_word || "CLDRN"} ${
+              selectedModel?.gender
+            }, ${values.prompt}`;
+          })()
+        : values.prompt,
+    };
+    await generateImage(newValues);
     setLoading(false);
   }
   return (
@@ -173,6 +196,20 @@ const ImageUserInput = () => {
                             <p>Flux Schnell</p>
                           </div>
                         </SelectItem>
+
+                        {userModels?.map(
+                          (model) =>
+                            model.training_status === "succeeded" && (
+                              <SelectItem
+                                key={`${model.model_id}:${model.version}`}
+                                value={`berkeguleryuz/${model.model_id}:${model.version}`}
+                                className="focus:bg-lime-500/70">
+                                <div className="flex items-center gap-2">
+                                  <p>{model.model_name}</p>
+                                </div>
+                              </SelectItem>
+                            ),
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />

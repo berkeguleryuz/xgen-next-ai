@@ -54,13 +54,15 @@ export async function POST(req: NextRequest) {
       return new NextResponse("User not found!", { status: 401 });
     }
 
-    // const userEmail = user.user?.email ?? "";
+    const userEmail = user.user?.email ?? "";
     const username = user.user?.user_metadata.full_name ?? "";
 
     if (body.status === "succeeded") {
       await resend.emails.send({
-        from: "onboarding@resend.dev",
-        to: "berke@clodron.com",
+        from: "xGen <berke@clodron.com>",
+        to: [userEmail],
+        // from: "onboarding@resend.dev",
+        // to: "berke@clodron.com",
         subject: "Model Training Completed",
         react: await EmailTemplate({
           userName: username,
@@ -79,10 +81,10 @@ export async function POST(req: NextRequest) {
         .eq("model_name", modelName);
     } else {
       await resend.emails.send({
-        // from: "xGen <berke@clodron.com>",
-        // to: [userEmail],
-        from: "onboarding@resend.dev",
-        to: "berke@clodron.com",
+        from: "xGen <berke@clodron.com>",
+        to: [userEmail],
+        // from: "onboarding@resend.dev",
+        // to: "berke@clodron.com",
         subject: `Model Training ${body.status}`,
         react: await EmailTemplate({
           userName: username,
