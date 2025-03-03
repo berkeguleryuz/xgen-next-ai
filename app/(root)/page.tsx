@@ -12,6 +12,7 @@ export default async function Home() {
   // if (user) {
   //   return redirect("/dashboard");
   // }
+  
 
   return (
     <main className="relative h-full w-full text-white">
