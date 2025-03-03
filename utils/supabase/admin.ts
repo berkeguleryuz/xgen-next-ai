@@ -48,6 +48,8 @@ const upsertPriceRecord = async (
     interval: price.recurring?.interval ?? null,
     interval_count: price.recurring?.interval_count ?? null,
     trial_period_days: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS,
+    description: null,
+    metadata: {}
   };
 
   const { error: upsertError } = await supabaseAdmin
@@ -235,7 +237,7 @@ const manageSubscriptionStatusChange = async (
     id: subscription.id,
     user_id: uuid,
     metadata: subscription.metadata,
-    status: subscription.status,
+    status: subscription.status === 'paused' ? 'canceled' : subscription.status as Tables<"subscriptions">["status"],
     price_id: subscription.items.data[0].price.id,
     //TODO check quantity on subscription
     // @ts-expect-error - tyy
@@ -279,7 +281,6 @@ const manageSubscriptionStatusChange = async (
   // For a new subscription copy the billing details to the customer object.
   // NOTE: This is a costly operation and should happen at the very end.
   if (createAction && subscription.default_payment_method && uuid)
-    //@ts-ignore
     await copyBillingDetailsToCustomer(
       uuid,
       subscription.default_payment_method as Stripe.PaymentMethod,
