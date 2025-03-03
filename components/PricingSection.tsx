@@ -3,9 +3,22 @@ import React, { useState } from "react";
 import HoverButton from "./ui/hover-button";
 import { Label } from "./ui/label";
 import { Switch } from "./ui/switch";
+import { Tables } from "@/database.types";
 
-const PricingSection = () => {
+type Product = Tables<"products">;
+type Price = Tables<"prices">;
+
+interface ProductWithPrices extends Product {
+  prices: Price[];
+}
+
+interface PricingProps {
+  products: ProductWithPrices[];
+}
+
+const PricingSection = ({ products }: PricingProps) => {
   const [billingInterval, setBillingInterval] = useState("month");
+  console.log(products);
   return (
     <section className="container mx-auto min-h-screen">
       <div className="flex flex-col text-center items-center justify-center gap-4">
