@@ -85,11 +85,60 @@ const PricingSection = ({
               minimumFractionDigits: 0,
             }).format((price?.unit_amount || 0) / 100);
 
+            const monthlyPrice = product.prices.find(
+              (p) => p.interval === "month",
+            );
+            const yearlyPrice = product.prices.find(
+              (p) => p.interval === "year",
+            );
+            const savings =
+              monthlyPrice?.unit_amount && yearlyPrice?.unit_amount
+                ? 100 -
+                  ((yearlyPrice.unit_amount / 12) * 100) /
+                    monthlyPrice.unit_amount
+                : 0;
+
+            // Yıllık planın aylık karşılığını hesapla
+            const monthlyEquivalent = yearlyPrice?.unit_amount
+              ? new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: yearlyPrice.currency!,
+                  minimumFractionDigits: 0,
+                }).format(yearlyPrice.unit_amount / 12 / 100)
+              : null;
+
+            // Yıllık toplam fiyat
+            const yearlyTotal = yearlyPrice?.unit_amount
+              ? new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: yearlyPrice.currency!,
+                  minimumFractionDigits: 0,
+                }).format(yearlyPrice.unit_amount / 100)
+              : null;
+
             return (
               <div
                 key={product.id}
-                className="relative min-h-[400px] w-full border border-lime-700 rounded-lg p-1 shadow-sm h-fit overflow-hidden bg-gradient-to-r from-lime-900 via-lime-700 to-lime-900">
-                <div className="flex min-h-[400px] w-full flex-col p-6 border shadow-3xl rounded-lg bg-[#0A0A0A] border-lime-700 border-dotted z-10">
+                className={cn(
+                  "group relative min-h-[300px] w-full rounded-2xl p-px shadow-2xl transition-all duration-500",
+                  "bg-gradient-to-b from-lime-600/20 to-lime-800/20",
+                  "hover:shadow-lime-900/20 hover:shadow-[0_8px_40px]",
+                  "before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-gradient-to-b before:from-lime-500/20 before:to-lime-800/20 before:blur-xl before:transition-all before:duration-500",
+                  "hover:before:blur-2xl hover:before:from-lime-500/40 hover:before:to-lime-800/40",
+                  product.name === mostPopularProduct &&
+                    "bg-gradient-to-b from-lime-500/30 to-lime-700/30 shadow-lime-900/30 shadow-[0_8px_40px] -translate-y-8",
+                )}>
+                <div
+                  className={cn(
+                    "relative h-full rounded-2xl p-8",
+                    "bg-gradient-to-b from-black/90 to-black/95 backdrop-blur-sm",
+                    "flex flex-col gap-6",
+                    "border border-lime-800/50",
+                    "transition-all duration-500",
+                    "group-hover:border-lime-700/50",
+                    product.name === mostPopularProduct &&
+                      "from-black/95 to-black/98 border-lime-600/50",
+                  )}>
                   <h2 className="text-2xl flex items-center gap-2 leading-6 font-semibold text-lime-200 justify-between">
                     {product.name}
 
@@ -100,9 +149,27 @@ const PricingSection = ({
                       </Badge>
                     )}
                   </h2>
-                  <div className="flex items-center font-semibold gap-2">
-                    <p className="text-lime-200 text-5xl">{priceString}</p> /
-                    <p className="text-lime-200 text-xl">{billingInterval}</p>
+                  <div className="space-y-2">
+                    <div className="flex items-baseline gap-2">
+                      <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-lime-200 bg-clip-text text-transparent">
+                        {billingInterval === "year"
+                          ? monthlyEquivalent
+                          : priceString}
+                      </p>
+                      <span className="text-lime-400">/month</span>
+                    </div>
+                    {billingInterval === "year" && (
+                      <div className="space-y-1">
+                        <p className="text-sm text-lime-300">
+                          {yearlyTotal} billed yearly
+                        </p>
+                        {savings > 0 && (
+                          <p className="text-sm text-lime-500 font-medium">
+                            Save {Math.round(savings)}% compared to monthly
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <p className="min-h-[60px]">{product.description}</p>
                   <Link
@@ -114,7 +181,7 @@ const PricingSection = ({
                     )}>
                     Subscribe
                   </Link>
-                  <div className="pt-6 pb-8 px-6">
+                  <div className="pt-6 px-6">
                     <ul className="flex flex-col gap-2 min-h-[200px]">
                       {Object.values(product.metadata || {}).map(
                         (feature, index) => {
