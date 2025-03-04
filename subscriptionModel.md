@@ -1,4 +1,4 @@
-- Hobby
+- xHobby
 - Essentials to kickstart your AI image creation journey, perfect for exploring creativity.
 
   - 1 trained model
@@ -7,8 +7,8 @@
   - Basic analytics
   - Community support
 
-- Pro
-- A plan designed for artists and professionals to elevate their creative projects.
+- xPro
+- Designed for artists and professionals to elevate their creative projects.
 
   - 2 trained models
   - 100 images per month
@@ -17,8 +17,8 @@
   - Priority support
   - Creative resources
 
-- Enterprise
-- Tailored for businesses and advanced creators looking to make an impact.
+- xAgency
+- Tailored for businesses, agencies and advanced creators looking to make an impact.
   - 3 trained models
   - Unlimited images
   - Unlimited posts
