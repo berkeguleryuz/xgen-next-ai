@@ -7,8 +7,8 @@ import ResetPasswordForm from "@/components/auth/ResetPasswordForm";
 import SignupForm from "@/components/auth/SignupForm";
 import { ArrowLeftIcon } from "lucide-react";
 
-const AuthForm = () => {
-  const [mode, setMode] = useState("login");
+const AuthForm = ({ state }: { state: string }) => {
+  const [mode, setMode] = useState(state);
   return (
     <div className="flex flex-col">
       <fieldset className="grid gap-4 rounded-[8px] border bg-lime-500/10 border-lime-500/10 p-4">

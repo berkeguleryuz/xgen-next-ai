@@ -1,37 +1,119 @@
 "use client";
 import React, { useState } from "react";
-import HoverButton from "./ui/hover-button";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
+import HoverButton from "../ui/hover-button";
+import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 import { Tables } from "@/database.types";
-import { Badge } from "./ui/badge";
-import Link from "next/link";
+import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
-import { CheckIcon } from "lucide-react";
+import { User } from "@supabase/supabase-js";
+import { usePathname, useRouter } from "next/navigation";
+import { checkoutWithStripe } from "@/utils/stripe/server";
+import { getErrorRedirect } from "@/utils/helpers";
+import { getStripe } from "@/utils/stripe/client";
 
 type Product = Tables<"products"> & {
   index?: number;
 };
 type Price = Tables<"prices">;
+type Subscription = Tables<"subscriptions">;
 
 interface ProductWithPrices extends Product {
   prices: Price[];
 }
 
-interface PricingProps {
-  products: ProductWithPrices[];
+interface PriceWithProduct extends Price {
+  products: Product | null;
+}
+
+interface SubscriptionWithProduct extends Subscription {
+  prices: PriceWithProduct | null;
+}
+
+interface PricingDialogProps {
+  subscription: SubscriptionWithProduct | null;
+  user: User | null;
+  products: ProductWithPrices[] | null;
   mostPopularProduct?: string;
 }
 
+const renderPricingButton = ({
+  subscription,
+  user,
+  product,
+  price,
+  mostPopularProduct,
+  handleStripeCheckout,
+  handleStripePortalRequest,
+}: {
+  subscription: SubscriptionWithProduct | null;
+  user: User | null;
+  product: ProductWithPrices;
+  price: Price;
+  mostPopularProduct: string;
+  handleStripeCheckout: () => Promise<void>;
+  handleStripePortalRequest: () => Promise<void>;
+}) => {
+  if (user && !subscription) {
+    return (
+      <button
+        onClick={() => handleStripeCheckout(price)}
+        className={cn(
+          "flex items-center justify-center bg-lime-600 border border-lime-700 hover:bg-lime-700 transition-all duration-300 text-white px-4 py-2 rounded-md",
+          product.name === mostPopularProduct &&
+            "bg-lime-500 hover:bg-lime-600 font-semibold",
+        )}>
+        Subscribe
+      </button>
+    );
+  }
+};
 
-
-const PricingSection = ({
+const PricingDialog = ({
+  user,
   products,
   mostPopularProduct = "xPro",
-}: PricingProps) => {
+  subscription,
+}: PricingDialogProps) => {
   const [billingInterval, setBillingInterval] = useState("month");
+  const router = useRouter();
+  const currentPath = usePathname();
+  console.log(subscription);
+
+  const handleStripeCheckout = async (price: Price) => {
+    // console.log("Handle stripe checkout", price);
+    if (!user) {
+      return router.push("/login");
+    }
+
+    const { errorRedirect, sessionId } = await checkoutWithStripe(
+      price,
+      currentPath,
+    );
+
+    if (errorRedirect) {
+      return router.push(errorRedirect);
+    }
+
+    if (!sessionId) {
+      return router.push(
+        getErrorRedirect(
+          currentPath,
+          "stripe_checkout_error",
+          "Failed to create checkout session",
+        ),
+      );
+    }
+
+    const stripe = await getStripe();
+    stripe?.redirectToCheckout({ sessionId });
+  };
+
+  const handleStripePortalRequest = async () => {
+    return "stripe request";
+  };
   return (
-    <section className="px-1 md:px-0 lg:container mx-auto min-h-screen">
+    <section className="container mx-auto min-h-[50vh] text-white">
       <div className="flex flex-col text-center items-center justify-center gap-4">
         <div className="mb-4">
           <HoverButton />
@@ -39,7 +121,7 @@ const PricingSection = ({
         <h1 className="-mt-4 text-5xl bg-transparent text-center bg-gradient-to-r from-lime-500 via-lime-800 via-40% to-lime-400 bg-clip-text text-transparent font-bold tracking-tight">
           That suits you best
         </h1>
-        <p className="text-base max-w-3xl text-lime-200">
+        <p className="text-base max-w-2xl text-lime-200">
           You can educate a model, or get a custom model for your business. Also
           you can automate your social media posts and images with our scraping
           and automation tools. You can also{" "}
@@ -73,7 +155,7 @@ const PricingSection = ({
           Yearly
         </Label>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 place-items-center mx-auto gap-4 md:gap-8 items-center justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-3 place-items-center mx-auto gap-8 items-center justify-center">
         {products
           .sort((a, b) => String(a.id).localeCompare(String(b.id)))
           .map((product) => {
@@ -173,7 +255,7 @@ const PricingSection = ({
                     )}
                   </div>
                   <p className="min-h-[60px]">{product.description}</p>
-                  <Link
+                  {/* <Link
                     href={`/login?state=signup`}
                     className={cn(
                       "flex items-center justify-center bg-lime-600 border border-lime-700 hover:bg-lime-700 transition-all duration-300 text-white px-4 py-2 rounded-md",
@@ -181,25 +263,16 @@ const PricingSection = ({
                         "bg-lime-700 hover:bg-lime-600",
                     )}>
                     Subscribe
-                  </Link>
-                  <div className="pt-6 px-6">
-                    <ul className="flex flex-col gap-2 min-h-[200px]">
-                      {Object.values(product.metadata || {}).map(
-                        (feature, index) => {
-                          if (feature) {
-                            return (
-                              <li
-                                key={index}
-                                className="flex items-center gap-2">
-                                <CheckIcon className="w-4 h-4 text-lime-500" />
-                                <p className="text-lime-200">{feature}</p>
-                              </li>
-                            );
-                          }
-                        },
-                      )}
-                    </ul>
-                  </div>
+                  </Link> */}
+                  {renderPricingButton({
+                    subscription,
+                    user,
+                    product,
+                    price,
+                    mostPopularProduct,
+                    handleStripeCheckout,
+                    handleStripePortalRequest,
+                  })}
                 </div>
               </div>
             );
@@ -208,4 +281,4 @@ const PricingSection = ({
     </section>
   );
 };
-export default PricingSection;
+export default PricingDialog;

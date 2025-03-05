@@ -126,10 +126,18 @@ export default function HoverButton() {
   }, [isHovering]);
 
   return (
-    <button
-      className="group relative my-8 rounded-full bg-gradient-to-r from-lime-500/30 via-lime-600/30 via-40% to-lime-500/30 p-1 text-white transition-transform hover:scale-110 active:scale-105 duration-500 ease-in-out"
+    <div
+      role="button"
+      tabIndex={0}
+      className="group relative rounded-full bg-gradient-to-r from-lime-500/30 via-lime-600/30 via-40% to-lime-500/30 p-1 text-white transition-transform hover:scale-110 active:scale-105 duration-500 ease-in-out"
       onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}>
+      onMouseLeave={() => setIsHovering(false)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          e.currentTarget.click();
+        }
+      }}>
       <div className="relative flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-lime-500 via-lime-600 via-40% to-lime-500 px-8 py-2 text-white">
         <Star className="size-6 -translate-y-0.5 group-hover:animate-pulse fill-white" />
         <Star
@@ -167,6 +175,6 @@ export default function HoverButton() {
           options={modifiedOptions}
         />
       )}
-    </button>
+    </div>
   );
 }
