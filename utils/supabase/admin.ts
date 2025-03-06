@@ -291,6 +291,7 @@ const manageSubscriptionStatusChange = async (
 };
 const updateUserCredits = async (userId: string, metadata: Json) => {
   const creditsData: TablesInsert<"credits"> = {
+    user_id: userId,
     image_generation_count:
       (metadata as { image_generation_count?: number })
         .image_generation_count || 0,
@@ -303,7 +304,7 @@ const updateUserCredits = async (userId: string, metadata: Json) => {
 
   const { error: upsertError } = await supabaseAdmin
     .from("credits")
-    .update(creditsData)
+    .upsert(creditsData)
     .eq("user_id", userId);
 
   if (upsertError) {
