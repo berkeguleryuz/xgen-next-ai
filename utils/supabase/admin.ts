@@ -298,7 +298,7 @@ const updateUserCredits = async (userId: string, metadata: Json) => {
     max_post_generation_count:
       (metadata as { post_generation_count?: number }).post_generation_count ||
       0,
-    model_training_count:
+    max_model_training_count:
       (metadata as { model_training_count?: number }).model_training_count || 0,
   };
 
