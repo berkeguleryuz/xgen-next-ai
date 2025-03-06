@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
 import PricingSheet from "./PricingSheet";
+import { format } from "date-fns";
 
 type Product = Tables<"products"> & {
   index?: number;
@@ -83,15 +84,15 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
     products: subscriptionProduct,
     unit_amount,
     currency,
-  } = subscription?.prices;
+  } = subscription?.prices || {};
 
   const priceString = new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: currency,
+    currency: currency!,
     minimumFractionDigits: 0,
   }).format((unit_amount || 0) / 100);
   return (
-    <Card className="max-w-2xl bg-transparent text-white p-0 border-lime-100">
+    <Card className="max-w-4xl bg-transparent text-white p-0 border-lime-100">
       <CardContent className="p-4 px-4">
         <div className="flex items-center justify-between text-2xl font-bold tracking-tight">
           <span>Plan Summary</span>
@@ -118,20 +119,29 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
               <Progress value={50} className="w-full bg-lime-300 " />
             </div>
           </div>
-          <div className="col-span-full flex flex-col pr-12">
-            Please upgrade to a plan to continue generating images and posts.
+          <div className="col-span-3 gap-4 flex flex-row justify-between flex-wrap">
+            <div className="flex flex-col pb-0">
+              <div className="text-sm font-normal">Price/Month</div>
+              <div className="flex-1 pt-1 text-sm font-bold">{priceString}</div>
+            </div>
+
+            <div className="flex flex-col pb-0">
+              <div className="text-sm font-normal">Included in Plan</div>
+              <div className="flex-1 pt-1 text-sm font-bold">0 credits</div>
+            </div>
+
+            <div className="flex w-full col-span-full flex-col pb-0">
+              <div className="text-sm font-normal">Next Billing Date</div>
+              <div className="flex-1 pt-1 text-sm font-bold">
+                {format(
+                  new Date(subscription.current_period_end),
+                  "MMM d, yyyy",
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <span className="flex ml-auto flex-row">
-          <PricingSheet
-            user={user}
-            products={products ?? []}
-            subscription={subscription}
-          />
-        </span>
-      </CardFooter>
     </Card>
   );
 };

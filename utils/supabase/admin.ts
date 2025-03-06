@@ -2,7 +2,7 @@ import { toDateTime } from "@/utils/helpers";
 import { stripe } from "@/utils/stripe/config";
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
-import type { Tables, TablesInsert } from "@/database.types";
+import type { Json, Tables, TablesInsert } from "@/database.types";
 
 type Product = Tables<"products">;
 type Price = Tables<"prices">;
@@ -49,7 +49,7 @@ const upsertPriceRecord = async (
     interval_count: price.recurring?.interval_count ?? null,
     trial_period_days: price.recurring?.trial_period_days ?? TRIAL_PERIOD_DAYS,
     description: null,
-    metadata: {}
+    metadata: price.metadata || null,
   };
 
   const { error: upsertError } = await supabaseAdmin
@@ -237,7 +237,10 @@ const manageSubscriptionStatusChange = async (
     id: subscription.id,
     user_id: uuid,
     metadata: subscription.metadata,
-    status: subscription.status === 'paused' ? 'canceled' : subscription.status as Tables<"subscriptions">["status"],
+    status:
+      subscription.status === "paused"
+        ? "canceled"
+        : (subscription.status as Tables<"subscriptions">["status"]),
     price_id: subscription.items.data[0].price.id,
     //TODO check quantity on subscription
     // @ts-expect-error - tyy
@@ -286,9 +289,33 @@ const manageSubscriptionStatusChange = async (
       subscription.default_payment_method as Stripe.PaymentMethod,
     );
 };
+const updateUserCredits = async (userId: string, metadata: Json) => {
+  const creditsData: TablesInsert<"credits"> = {
+    image_generation_count:
+      (metadata as { image_generation_count?: number })
+        .image_generation_count || 0,
+    post_generation_count:
+      (metadata as { post_generation_count?: number }).post_generation_count ||
+      0,
+    model_training_count:
+      (metadata as { model_training_count?: number }).model_training_count || 0,
+  };
+
+  const { error: upsertError } = await supabaseAdmin
+    .from("credits")
+    .update(creditsData)
+    .eq("user_id", userId);
+
+  if (upsertError) {
+    throw new Error(`Credits update failed: ${upsertError.message}`);
+  }
+
+  console.log(`Credits updated for user [${userId}]`);
+};
 
 export {
   upsertProductRecord,
+  updateUserCredits,
   upsertPriceRecord,
   deleteProductRecord,
   deletePriceRecord,
