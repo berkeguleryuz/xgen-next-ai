@@ -1,15 +1,12 @@
 import HeroSection from "@/components/HeroSection";
 import PricingSection from "@/components/PricingSection";
-import { getProducts, getUser } from "@/utils/supabase/queries";
+import { getProducts } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 
 
 export default async function Home() {
   const supabase = await createClient();
-  const [user, products] = await Promise.all([
-    getUser(supabase),
-    getProducts(supabase),
-  ]);
+  const [products] = await Promise.all([getProducts(supabase)]);
 
   // if (user) {
   //   return redirect("/dashboard");
@@ -18,7 +15,7 @@ export default async function Home() {
   return (
     <main className="relative h-full w-full text-white">
       <HeroSection />
-      <PricingSection products={products ?? []} user={user} />
+      <PricingSection products={products ?? []} />
     </main>
   );
 }
