@@ -51,7 +51,7 @@ const renderPricingButton = ({
   product: ProductWithPrices;
   price: Price;
   mostPopularProduct: string;
-  handleStripeCheckout: () => Promise<void>;
+  handleStripeCheckout: (price: Price) => Promise<void>;
   handleStripePortalRequest: () => Promise<void>;
 }) => {
   if (user && !subscription) {
@@ -64,6 +64,12 @@ const renderPricingButton = ({
             "bg-lime-500 hover:bg-lime-600 font-semibold",
         )}>
         Subscribe
+      </button>
+    );
+  } else if (subscription) {
+    return (
+      <button onClick={handleStripePortalRequest}>
+        Manage Subscription
       </button>
     );
   }
@@ -109,12 +115,9 @@ const PricingDialog = ({
     stripe?.redirectToCheckout({ sessionId });
   };
 
-  const handleStripePortalRequest = async () => {
-    return "stripe request";
-  };
-  return (
-    <section className="container mx-auto min-h-[50vh] text-white">
-      <div className="flex flex-col text-center items-center justify-center gap-4">
+    return (
+      <section className="container mx-auto min-h-[50vh] text-white">
+        <div className="flex flex-col text-center items-center justify-center gap-4">
         <div className="mb-4">
           <HoverButton />
         </div>
@@ -156,106 +159,107 @@ const PricingDialog = ({
         </Label>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 place-items-center mx-auto gap-8 items-center justify-center">
-        {products
-          .sort((a, b) => String(a.id).localeCompare(String(b.id)))
-          .map((product) => {
-            const price = product?.prices.find(
-              (price) => price.interval === billingInterval,
-            );
-            if (!price) return null;
+        {products &&
+          products
+            .sort((a, b) => String(a.id).localeCompare(String(b.id)))
+            .map((product) => {
+              const price = product?.prices.find(
+                (price) => price.interval === billingInterval,
+              );
+              if (!price) return null;
 
-            const priceString = new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: price.currency!,
-              minimumFractionDigits: 0,
-            }).format((price?.unit_amount || 0) / 100);
+              const priceString = new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: price.currency!,
+                minimumFractionDigits: 0,
+              }).format((price?.unit_amount || 0) / 100);
 
-            const monthlyPrice = product.prices.find(
-              (p) => p.interval === "month",
-            );
-            const yearlyPrice = product.prices.find(
-              (p) => p.interval === "year",
-            );
-            const savings =
-              monthlyPrice?.unit_amount && yearlyPrice?.unit_amount
-                ? 100 -
-                  ((yearlyPrice.unit_amount / 12) * 100) /
-                    monthlyPrice.unit_amount
-                : 0;
+              const monthlyPrice = product.prices.find(
+                (p) => p.interval === "month",
+              );
+              const yearlyPrice = product.prices.find(
+                (p) => p.interval === "year",
+              );
+              const savings =
+                monthlyPrice?.unit_amount && yearlyPrice?.unit_amount
+                  ? 100 -
+                    ((yearlyPrice.unit_amount / 12) * 100) /
+                      monthlyPrice.unit_amount
+                  : 0;
 
-            const monthlyEquivalent = yearlyPrice?.unit_amount
-              ? new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: yearlyPrice.currency!,
-                  minimumFractionDigits: 0,
-                }).format(yearlyPrice.unit_amount / 12 / 100)
-              : null;
+              const monthlyEquivalent = yearlyPrice?.unit_amount
+                ? new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: yearlyPrice.currency!,
+                    minimumFractionDigits: 0,
+                  }).format(yearlyPrice.unit_amount / 12 / 100)
+                : null;
 
-            const yearlyTotal = yearlyPrice?.unit_amount
-              ? new Intl.NumberFormat("en-US", {
-                  style: "currency",
-                  currency: yearlyPrice.currency!,
-                  minimumFractionDigits: 0,
-                }).format(yearlyPrice.unit_amount / 100)
-              : null;
+              const yearlyTotal = yearlyPrice?.unit_amount
+                ? new Intl.NumberFormat("en-US", {
+                    style: "currency",
+                    currency: yearlyPrice.currency!,
+                    minimumFractionDigits: 0,
+                  }).format(yearlyPrice.unit_amount / 100)
+                : null;
 
-            return (
-              <div
-                key={product.id}
-                className={cn(
-                  "group relative min-h-[300px] w-full rounded-2xl p-px shadow-2xl transition-all duration-500",
-                  "bg-gradient-to-b from-lime-600/20 to-lime-800/20",
-                  "hover:shadow-lime-900/20 hover:shadow-[0_8px_40px]",
-                  "before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-gradient-to-b before:from-lime-500/20 before:to-lime-800/20 before:blur-xl before:transition-all before:duration-500",
-                  "hover:before:blur-2xl hover:before:from-lime-500/40 hover:before:to-lime-800/40",
-                  product.name === mostPopularProduct &&
-                    "bg-gradient-to-b from-lime-500/30 to-lime-700/30 shadow-lime-900/30 shadow-[0_8px_40px] md:-translate-y-8",
-                )}>
+              return (
                 <div
+                  key={product.id}
                   className={cn(
-                    "relative h-full rounded-2xl p-8",
-                    "bg-gradient-to-b from-black/90 to-black/95 backdrop-blur-sm",
-                    "flex flex-col gap-6",
-                    "border border-lime-800/50",
-                    "transition-all duration-500",
-                    "group-hover:border-lime-700/50",
+                    "group relative min-h-[300px] w-full rounded-2xl p-px shadow-2xl transition-all duration-500",
+                    "bg-gradient-to-b from-lime-600/20 to-lime-800/20",
+                    "hover:shadow-lime-900/20 hover:shadow-[0_8px_40px]",
+                    "before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-gradient-to-b before:from-lime-500/20 before:to-lime-800/20 before:blur-xl before:transition-all before:duration-500",
+                    "hover:before:blur-2xl hover:before:from-lime-500/40 hover:before:to-lime-800/40",
                     product.name === mostPopularProduct &&
-                      "from-black/95 to-black/98 border-lime-600/50",
+                      "bg-gradient-to-b from-lime-500/30 to-lime-700/30 shadow-lime-900/30 shadow-[0_8px_40px] md:-translate-y-8",
                   )}>
-                  <h2 className="text-2xl flex items-center gap-2 leading-6 font-semibold text-lime-200 justify-between">
-                    {product.name}
+                  <div
+                    className={cn(
+                      "relative h-full rounded-2xl p-8",
+                      "bg-gradient-to-b from-black/90 to-black/95 backdrop-blur-sm",
+                      "flex flex-col gap-6",
+                      "border border-lime-800/50",
+                      "transition-all duration-500",
+                      "group-hover:border-lime-700/50",
+                      product.name === mostPopularProduct &&
+                        "from-black/95 to-black/98 border-lime-600/50",
+                    )}>
+                    <h2 className="text-2xl flex items-center gap-2 leading-6 font-semibold text-lime-200 justify-between">
+                      {product.name}
 
-                    {product?.name?.toLocaleLowerCase() ===
-                      mostPopularProduct?.toLocaleLowerCase() && (
-                      <Badge className="bg-lime-700 text-white">
-                        Most Popular
-                      </Badge>
-                    )}
-                  </h2>
-                  <div className="space-y-2">
-                    <div className="flex items-baseline gap-2">
-                      <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-lime-200 bg-clip-text text-transparent">
-                        {billingInterval === "year"
-                          ? monthlyEquivalent
-                          : priceString}
-                      </p>
-                      <span className="text-lime-400">/month</span>
-                    </div>
-                    {billingInterval === "year" && (
-                      <div className="space-y-1">
-                        <p className="text-sm text-lime-300">
-                          {yearlyTotal} billed yearly
+                      {product?.name?.toLocaleLowerCase() ===
+                        mostPopularProduct?.toLocaleLowerCase() && (
+                        <Badge className="bg-lime-700 text-white">
+                          Most Popular
+                        </Badge>
+                      )}
+                    </h2>
+                    <div className="space-y-2">
+                      <div className="flex items-baseline gap-2">
+                        <p className="text-5xl font-bold tracking-tight bg-gradient-to-r from-white to-lime-200 bg-clip-text text-transparent">
+                          {billingInterval === "year"
+                            ? monthlyEquivalent
+                            : priceString}
                         </p>
-                        {savings > 0 && (
-                          <p className="text-sm text-lime-500 font-medium">
-                            Save {Math.round(savings)}% compared to monthly
-                          </p>
-                        )}
+                        <span className="text-lime-400">/month</span>
                       </div>
-                    )}
-                  </div>
-                  <p className="min-h-[60px]">{product.description}</p>
-                  {/* <Link
+                      {billingInterval === "year" && (
+                        <div className="space-y-1">
+                          <p className="text-sm text-lime-300">
+                            {yearlyTotal} billed yearly
+                          </p>
+                          {savings > 0 && (
+                            <p className="text-sm text-lime-500 font-medium">
+                              Save {Math.round(savings)}% compared to monthly
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <p className="min-h-[60px]">{product.description}</p>
+                    {/* <Link
                     href={`/login?state=signup`}
                     className={cn(
                       "flex items-center justify-center bg-lime-600 border border-lime-700 hover:bg-lime-700 transition-all duration-300 text-white px-4 py-2 rounded-md",
@@ -264,19 +268,19 @@ const PricingDialog = ({
                     )}>
                     Subscribe
                   </Link> */}
-                  {renderPricingButton({
-                    subscription,
-                    user,
-                    product,
-                    price,
-                    mostPopularProduct,
-                    handleStripeCheckout,
-                    handleStripePortalRequest,
-                  })}
+                    {renderPricingButton({
+                      subscription,
+                      user,
+                      product,
+                      price,
+                      mostPopularProduct,
+                      handleStripeCheckout,
+                      handleStripePortalRequest: () => Promise.resolve(),
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
       </div>
     </section>
   );
