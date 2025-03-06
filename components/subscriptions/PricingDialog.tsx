@@ -66,12 +66,6 @@ const renderPricingButton = ({
         Subscribe
       </button>
     );
-  } else if (subscription) {
-    return (
-      <button onClick={handleStripePortalRequest}>
-        Manage Subscription
-      </button>
-    );
   }
 };
 
@@ -115,9 +109,12 @@ const PricingDialog = ({
     stripe?.redirectToCheckout({ sessionId });
   };
 
-    return (
-      <section className="container mx-auto min-h-[50vh] text-white">
-        <div className="flex flex-col text-center items-center justify-center gap-4">
+  const handleStripePortalRequest = async () => {
+    return "stripe request";
+  };
+  return (
+    <section className="container mx-auto min-h-[50vh] text-white">
+      <div className="flex flex-col text-center items-center justify-center gap-4">
         <div className="mb-4">
           <HoverButton />
         </div>
@@ -275,7 +272,7 @@ const PricingDialog = ({
                       price,
                       mostPopularProduct,
                       handleStripeCheckout,
-                      handleStripePortalRequest: () => Promise.resolve(),
+                      handleStripePortalRequest,
                     })}
                   </div>
                 </div>

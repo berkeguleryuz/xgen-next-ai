@@ -292,10 +292,10 @@ const manageSubscriptionStatusChange = async (
 const updateUserCredits = async (userId: string, metadata: Json) => {
   const creditsData: TablesInsert<"credits"> = {
     user_id: userId,
-    image_generation_count:
+    max_image_generation_count:
       (metadata as { image_generation_count?: number })
         .image_generation_count || 0,
-    post_generation_count:
+    max_post_generation_count:
       (metadata as { post_generation_count?: number }).post_generation_count ||
       0,
     model_training_count:
