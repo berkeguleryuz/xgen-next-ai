@@ -79,7 +79,6 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
     );
   }
 
-  console.log(subscription);
   const {
     products: subscriptionProduct,
     unit_amount,
@@ -91,6 +90,7 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
     currency: currency!,
     minimumFractionDigits: 0,
   }).format((unit_amount || 0) / 100);
+  
   return (
     <Card className="max-w-4xl bg-transparent text-white p-0 border-lime-100">
       <CardContent className="p-4 px-4">
