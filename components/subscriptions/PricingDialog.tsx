@@ -77,6 +77,22 @@ const renderPricingButton = ({
     );
   }
 
+  if (user && subscription) {
+    return (
+      <button
+        onClick={() => handleStripePortalRequest()}
+        className={cn(
+          "flex items-center justify-center bg-transparent border border-lime-700 hover:bg-lime-700 transition-all duration-300 text-white px-4 py-2 rounded-md",
+          product.name === mostPopularProduct &&
+            "bg-lime-500 hover:bg-lime-600 font-semibold",
+        )}>
+        Switch Plan
+      </button>
+    );
+  }
+
+  
+
   if (user && !subscription) {
     return (
       <button
@@ -304,7 +320,7 @@ const PricingDialog = ({
                         </div>
                       )}
                     </div>
-                    <p className="min-h-[60px]">{product.description}</p>
+                    <p className="min-h-[85px]">{product.description}</p>
                     {/* <Link
                     href={`/login?state=signup`}
                     className={cn(
