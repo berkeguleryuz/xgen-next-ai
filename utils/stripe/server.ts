@@ -55,13 +55,13 @@ export async function checkoutWithStripe(
       metadata: {
         image_generation_count:
           (price.metadata as { image_generation_count?: number })
-            .image_generation_count ?? 0,
+            .image_generation_count || 0,
         post_generation_count:
           (price.metadata as { post_generation_count?: number })
-            .post_generation_count ?? 0,
+            .post_generation_count || 0,
         model_training_count:
           (price.metadata as { model_training_count?: number })
-            .model_training_count ?? 0,
+            .model_training_count || 0,
       },
       customer_update: {
         address: "auto",

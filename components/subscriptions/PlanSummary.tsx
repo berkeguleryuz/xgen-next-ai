@@ -120,8 +120,7 @@ const PlanSummary = ({
             <div className="flex text-sm items-center justify-between">
               <span>Image Generation Credits</span>
               <span className="font-medium">
-                {Math.max(0, maxImageGenerationCount - imageGenerationCount)}{" "}
-                remaining
+                {imageGenerationCount} remaining
               </span>
             </div>
             <div>
@@ -134,8 +133,7 @@ const PlanSummary = ({
             <div className="flex text-sm items-center justify-between">
               <span>Post Credits</span>
               <span className="font-medium">
-                {Math.max(0, maxPostGenerationCount - postGenerationCount)}{" "}
-                remaining
+                {postGenerationCount} remaining
               </span>
             </div>
             <div>
@@ -148,8 +146,7 @@ const PlanSummary = ({
             <div className="flex text-sm items-center justify-between">
               <span>Model Training Credits</span>
               <span className="font-medium">
-                {Math.max(0, maxModelTrainingCount - modelTrainingCount)}{" "}
-                remaining
+                {modelTrainingCount} remaining
               </span>
             </div>
             <div>
@@ -177,9 +174,9 @@ const PlanSummary = ({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="border-t border-lime-100">
+      <CardFooter className="border-t px-4 border-lime-100">
         <div className="flex flex-col mt-4 pb-0">
-          <div className="text-2xl font-bold tracking-tight text-center">
+          <div className="text-2xl font-bold tracking-tight text-left">
             Included in Plan
           </div>
           <div className="flex-1 pt-1 text-sm font-bold">
@@ -188,7 +185,7 @@ const PlanSummary = ({
                 <span className="text-2xl text-lime-200">✿</span>
               </div>
               <p>
-                {imageGenerationCount} / {maxImageGenerationCount} Image
+                {maxImageGenerationCount} Image Generations
               </p>
             </div>
             <div className="flex flex-row items-center gap-2">
@@ -196,7 +193,7 @@ const PlanSummary = ({
                 <span className="text-2xl text-lime-200">♻︎</span>
               </div>
               <p>
-                {postGenerationCount} / {maxPostGenerationCount} Post
+                {maxPostGenerationCount} Post Generations
               </p>
             </div>
             <div className="flex flex-row items-center gap-2">
@@ -204,7 +201,7 @@ const PlanSummary = ({
                 <span className="text-2xl text-lime-200">♽</span>
               </div>
               <p>
-                {modelTrainingCount} / {maxModelTrainingCount} Model Training
+                {maxModelTrainingCount} Model Training
               </p>
             </div>
           </div>
