@@ -7,6 +7,8 @@ import {
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import PlanSummary from "@/components/subscriptions/PlanSummary";
+import { getCredits } from "@/utils/credit-actions";
+import PricingDialog from "@/components/subscriptions/PricingDialog";
 
 const SubscriptionsPage = async () => {
   const supabase = await createClient();
@@ -20,6 +22,8 @@ const SubscriptionsPage = async () => {
     return redirect("/login");
   }
 
+  const { data: credits } = await getCredits();
+
   return (
     <section className="container mx-auto grid p-4 gap-4 overflow-hidden min-h-screen">
       <div className="">
@@ -30,11 +34,23 @@ const SubscriptionsPage = async () => {
 
         <div className="grid gap-10 mt-5">
           <PlanSummary
+            credits={credits}
             subscription={subscription}
             user={user}
             products={products || []}
           />
         </div>
+      </div>
+      <div className="mt-4 flex">
+        {subscription?.status === "active" && (
+          <PricingDialog
+            activePlan={true}
+            subscription={subscription}
+            user={user}
+            products={products || []}
+            activeProduct={subscription?.prices?.products?.name.toLowerCase() || "xPro"}
+          />
+        )}
       </div>
     </section>
   );

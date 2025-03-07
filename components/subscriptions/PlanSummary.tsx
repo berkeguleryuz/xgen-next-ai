@@ -29,10 +29,16 @@ interface PlanSummaryProps {
   subscription: SubscriptionWithProduct | null;
   user: User | null;
   products: ProductWithPrices[] | null;
+  credits: Tables<"credits"> | null;
 }
 
-const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
-  if (!subscription || subscription.status !== "active") {
+const PlanSummary = ({
+  subscription,
+  user,
+  products,
+  credits,
+}: PlanSummaryProps) => {
+  if (!credits || !subscription || subscription.status !== "active") {
     return (
       <Card className="max-w-2xl bg-transparent text-white p-0 border-lime-100">
         <CardContent className="p-4 px-4">
@@ -90,7 +96,15 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
     currency: currency!,
     minimumFractionDigits: 0,
   }).format((unit_amount || 0) / 100);
-  
+
+  const imageGenerationCount = credits.image_generation_count || 0;
+  const postGenerationCount = credits.post_generation_count || 0;
+  const modelTrainingCount = credits.model_training_count || 0;
+
+  const maxImageGenerationCount = credits?.max_image_generation_count || 0;
+  const maxPostGenerationCount = credits?.max_post_generation_count || 0;
+  const maxModelTrainingCount = credits?.max_model_training_count || 0;
+
   return (
     <Card className="max-w-4xl bg-transparent text-white p-0 border-lime-100">
       <CardContent className="p-4 px-4">
@@ -105,32 +119,53 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
           <div className="col-span-5 flex flex-col pr-12 gap-1">
             <div className="flex text-sm items-center justify-between">
               <span>Image Generation Credits</span>
-              <span className="font-medium">0 remaining</span>
+              <span className="font-medium">
+                {Math.max(0, maxImageGenerationCount - imageGenerationCount)}{" "}
+                remaining
+              </span>
             </div>
             <div>
-              <Progress value={50} className="w-full bg-lime-300 " />
+              <Progress
+                value={(imageGenerationCount / maxImageGenerationCount) * 100}
+                className="w-full bg-lime-300 "
+              />
             </div>
 
             <div className="flex text-sm items-center justify-between">
               <span>Post Credits</span>
-              <span className="font-medium">0 remaining</span>
+              <span className="font-medium">
+                {Math.max(0, maxPostGenerationCount - postGenerationCount)}{" "}
+                remaining
+              </span>
             </div>
             <div>
-              <Progress value={50} className="w-full bg-lime-300 " />
+              <Progress
+                value={(postGenerationCount / maxPostGenerationCount) * 100}
+                className="w-full bg-lime-300 "
+              />
+            </div>
+
+            <div className="flex text-sm items-center justify-between">
+              <span>Model Training Credits</span>
+              <span className="font-medium">
+                {Math.max(0, maxModelTrainingCount - modelTrainingCount)}{" "}
+                remaining
+              </span>
+            </div>
+            <div>
+              <Progress
+                value={(modelTrainingCount / maxModelTrainingCount) * 100}
+                className="w-full bg-lime-300 "
+              />
             </div>
           </div>
-          <div className="col-span-3 gap-4 flex flex-row justify-between flex-wrap">
+          <div className="col-span-3 items-center justify-between gap-4 flex flex-row flex-wrap">
             <div className="flex flex-col pb-0">
-              <div className="text-sm font-normal">Price/Month</div>
+              <div className="text-sm font-normal">Price / Month</div>
               <div className="flex-1 pt-1 text-sm font-bold">{priceString}</div>
             </div>
 
-            <div className="flex flex-col pb-0">
-              <div className="text-sm font-normal">Included in Plan</div>
-              <div className="flex-1 pt-1 text-sm font-bold">0 credits</div>
-            </div>
-
-            <div className="flex w-full col-span-full flex-col pb-0">
+            <div className="">
               <div className="text-sm font-normal">Next Billing Date</div>
               <div className="flex-1 pt-1 text-sm font-bold">
                 {format(
@@ -142,6 +177,39 @@ const PlanSummary = ({ subscription, user, products }: PlanSummaryProps) => {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="border-t border-lime-100">
+        <div className="flex flex-col mt-4 pb-0">
+          <div className="text-2xl font-bold tracking-tight text-center">
+            Included in Plan
+          </div>
+          <div className="flex-1 pt-1 text-sm font-bold">
+            <div className="flex flex-row text-center items-center gap-2">
+              <div className="w-8 flex justify-center">
+                <span className="text-2xl text-lime-200">✿</span>
+              </div>
+              <p>
+                {imageGenerationCount} / {maxImageGenerationCount} Image
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-2">
+              <div className="w-8 flex justify-center">
+                <span className="text-2xl text-lime-200">♻︎</span>
+              </div>
+              <p>
+                {postGenerationCount} / {maxPostGenerationCount} Post
+              </p>
+            </div>
+            <div className="flex flex-row items-center gap-2">
+              <div className="w-8 flex justify-center">
+                <span className="text-2xl text-lime-200">♽</span>
+              </div>
+              <p>
+                {modelTrainingCount} / {maxModelTrainingCount} Model Training
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardFooter>
     </Card>
   );
 };

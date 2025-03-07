@@ -23,8 +23,6 @@ interface PricingProps {
   mostPopularProduct?: string;
 }
 
-
-
 const PricingSection = ({
   products,
   mostPopularProduct = "xPro",

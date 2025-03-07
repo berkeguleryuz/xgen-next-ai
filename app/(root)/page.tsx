@@ -1,12 +1,15 @@
 import HeroSection from "@/components/HeroSection";
 import PricingSection from "@/components/PricingSection";
-import { getProducts } from "@/utils/supabase/queries";
+import { getProducts, getUser } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
 
 
 export default async function Home() {
   const supabase = await createClient();
-  const [products] = await Promise.all([getProducts(supabase)]);
+  const [user, products] = await Promise.all([
+    getUser(supabase),
+    getProducts(supabase),
+  ]);
 
   // if (user) {
   //   return redirect("/dashboard");
