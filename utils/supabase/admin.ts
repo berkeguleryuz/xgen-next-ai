@@ -294,14 +294,23 @@ const updateUserCredits = async (userId: string, metadata: Json) => {
     user_id: userId,
     max_image_generation_count:
       (metadata as { image_generation_count?: number })
-        .image_generation_count || 0,
+        .image_generation_count ?? 0,
     max_post_generation_count:
-      (metadata as { post_generation_count?: number }).post_generation_count ||
+      (metadata as { post_generation_count?: number }).post_generation_count ??
       0,
     max_model_training_count:
-      (metadata as { model_training_count?: number }).model_training_count || 0,
-  };
+      (metadata as { model_training_count?: number }).model_training_count ?? 0,
 
+      
+    image_generation_count:
+      (metadata as { image_generation_count?: number })
+        .image_generation_count ?? 0,
+    post_generation_count:
+      (metadata as { post_generation_count?: number }).post_generation_count ??
+      0,
+    model_training_count:
+      (metadata as { model_training_count?: number }).model_training_count ?? 0,
+  };
   const { error: upsertError } = await supabaseAdmin
     .from("credits")
     .upsert(creditsData)

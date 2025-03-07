@@ -97,20 +97,20 @@ const PlanSummary = ({
     minimumFractionDigits: 0,
   }).format((unit_amount || 0) / 100);
 
-  const imageGenerationCount = credits.image_generation_count || 0;
-  const postGenerationCount = credits.post_generation_count || 0;
-  const modelTrainingCount = credits.model_training_count || 0;
+  const imageGenerationCount = credits.image_generation_count ?? 0;
+  const postGenerationCount = credits.post_generation_count ?? 0;
+  const modelTrainingCount = credits.model_training_count ?? 0;
 
-  const maxImageGenerationCount = credits?.max_image_generation_count || 0;
-  const maxPostGenerationCount = credits?.max_post_generation_count || 0;
-  const maxModelTrainingCount = credits?.max_model_training_count || 0;
+  const maxImageGenerationCount = credits?.max_image_generation_count ?? 0;
+  const maxPostGenerationCount = credits?.max_post_generation_count ?? 0;
+  const maxModelTrainingCount = credits?.max_model_training_count ?? 0;
 
   return (
     <Card className="max-w-4xl bg-transparent text-white p-0 border-lime-100">
       <CardContent className="p-4 px-4">
         <div className="flex items-center justify-between text-2xl font-bold tracking-tight">
           <span>Plan Summary</span>
-          <Badge className="bg-lime-500 text-black items-center justify-center">
+          <Badge className="bg-lime-500 hover:bg-lime-600 text-black items-center justify-center">
             {subscriptionProduct?.name} Plan
           </Badge>
         </div>

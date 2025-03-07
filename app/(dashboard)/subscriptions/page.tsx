@@ -42,15 +42,13 @@ const SubscriptionsPage = async () => {
         </div>
       </div>
       <div className="mt-4 flex">
-        {subscription?.status === "active" && (
           <PricingDialog
             activePlan={true}
             subscription={subscription}
             user={user}
             products={products || []}
-            activeProduct={subscription?.prices?.products?.name.toLowerCase() || "xPro"}
+            activeProduct={subscription?.prices?.products?.name.toLowerCase() || ""}
           />
-        )}
       </div>
     </section>
   );
