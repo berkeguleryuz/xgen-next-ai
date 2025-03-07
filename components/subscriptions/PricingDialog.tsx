@@ -8,9 +8,11 @@ import { Badge } from "../ui/badge";
 import { cn } from "@/lib/utils";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter } from "next/navigation";
-import { checkoutWithStripe } from "@/utils/stripe/server";
+import { checkoutWithStripe, createStripePortal } from "@/utils/stripe/server";
 import { getErrorRedirect } from "@/utils/helpers";
 import { getStripe } from "@/utils/stripe/client";
+import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 type Product = Tables<"products"> & {
   index?: number;
@@ -35,6 +37,8 @@ interface PricingDialogProps {
   user: User | null;
   products: ProductWithPrices[] | null;
   mostPopularProduct?: string;
+  activePlan?: boolean;
+  activeProduct?: string;
 }
 
 const renderPricingButton = ({
@@ -54,6 +58,25 @@ const renderPricingButton = ({
   handleStripeCheckout: (price: Price) => Promise<void>;
   handleStripePortalRequest: () => Promise<void>;
 }) => {
+  if (
+    user &&
+    subscription &&
+    subscription?.prices?.products?.name?.toLowerCase() ===
+      product.name?.toLowerCase()
+  ) {
+    return (
+      <button
+        onClick={() => handleStripePortalRequest()}
+        className={cn(
+          "flex items-center justify-center bg-lime-600 border border-lime-700 hover:bg-lime-700 transition-all duration-300 text-white px-4 py-2 rounded-md",
+          product.name === mostPopularProduct &&
+            "bg-lime-500 hover:bg-lime-600 font-semibold",
+        )}>
+        Manage Subscription
+      </button>
+    );
+  }
+
   if (user && !subscription) {
     return (
       <button
@@ -66,25 +89,20 @@ const renderPricingButton = ({
         Subscribe
       </button>
     );
-  } else if (subscription) {
-    return (
-      <button onClick={handleStripePortalRequest}>
-        Manage Subscription
-      </button>
-    );
   }
 };
 
 const PricingDialog = ({
   user,
   products,
-  mostPopularProduct = "xPro",
+  mostPopularProduct = "",
   subscription,
+  activePlan = false,
+  activeProduct = "",
 }: PricingDialogProps) => {
   const [billingInterval, setBillingInterval] = useState("month");
   const router = useRouter();
   const currentPath = usePathname();
-  console.log(subscription);
 
   const handleStripeCheckout = async (price: Price) => {
     // console.log("Handle stripe checkout", price);
@@ -115,30 +133,50 @@ const PricingDialog = ({
     stripe?.redirectToCheckout({ sessionId });
   };
 
-    return (
-      <section className="container mx-auto min-h-[50vh] text-white">
-        <div className="flex flex-col text-center items-center justify-center gap-4">
-        <div className="mb-4">
-          <HoverButton />
-        </div>
-        <h1 className="-mt-4 text-5xl bg-transparent text-center bg-gradient-to-r from-lime-500 via-lime-800 via-40% to-lime-400 bg-clip-text text-transparent font-bold tracking-tight">
-          That suits you best
-        </h1>
-        <p className="text-base max-w-2xl text-lime-200">
-          You can educate a model, or get a custom model for your business. Also
-          you can automate your social media posts and images with our scraping
-          and automation tools. You can also{" "}
-          <strong className="uppercase bg-lime-700 text-white px-2 py-1 rounded-md">
-            upgrade
-          </strong>{" "}
-          or downgrade{" "}
-          <strong className="uppercase bg-lime-700 text-white px-2 py-1 rounded-md">
-            anytime
-          </strong>
-          .
-        </p>
+  const handleStripePortalRequest = async () => {
+    toast.custom(() => (
+      <div
+        className={cn(
+          "bg-lime-700 text-white px-4 py-2 rounded-md",
+          "animate-in fade-in-0 zoom-in-95 flex items-center justify-center",
+        )}>
+        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+        Redirecting to Stripe...
       </div>
-      <div className="flex gap-4 py-12 items-center justify-center">
+    ));
+    const redirectUrl = await createStripePortal(currentPath);
+    return router.push(redirectUrl);
+  };
+  return (
+    <section className="container mx-auto min-h-[50vh] text-white">
+      {!activePlan && (
+        <div className="flex flex-col text-center items-center justify-center gap-4">
+          <div className="mb-4">
+            <HoverButton />
+          </div>
+          <h1 className="-mt-4 text-5xl bg-transparent text-center bg-gradient-to-r from-lime-500 via-lime-800 via-40% to-lime-400 bg-clip-text text-transparent font-bold tracking-tight">
+            That suits you best
+          </h1>
+          <p className="text-base max-w-2xl text-lime-200">
+            You can educate a model, or get a custom model for your business.
+            Also you can automate your social media posts and images with our
+            scraping and automation tools. You can also{" "}
+            <strong className="uppercase bg-lime-700 text-white px-2 py-1 rounded-md">
+              upgrade
+            </strong>{" "}
+            or downgrade{" "}
+            <strong className="uppercase bg-lime-700 text-white px-2 py-1 rounded-md">
+              anytime
+            </strong>
+            .
+          </p>
+        </div>
+      )}
+      <div
+        className={cn(
+          "flex gap-4 items-center justify-center",
+          !activePlan ? "py-12" : "pb-12",
+        )}>
         <Label
           htmlFor="pricing-switch"
           className="font-semibold tracking-tight text-lg">
@@ -212,7 +250,7 @@ const PricingDialog = ({
                     "hover:shadow-lime-900/20 hover:shadow-[0_8px_40px]",
                     "before:absolute before:inset-0 before:-z-10 before:rounded-2xl before:bg-gradient-to-b before:from-lime-500/20 before:to-lime-800/20 before:blur-xl before:transition-all before:duration-500",
                     "hover:before:blur-2xl hover:before:from-lime-500/40 hover:before:to-lime-800/40",
-                    product.name === mostPopularProduct &&
+                    product.name === activeProduct.toLowerCase() &&
                       "bg-gradient-to-b from-lime-500/30 to-lime-700/30 shadow-lime-900/30 shadow-[0_8px_40px] md:-translate-y-8",
                   )}>
                   <div
@@ -225,13 +263,21 @@ const PricingDialog = ({
                       "group-hover:border-lime-700/50",
                       product.name === mostPopularProduct &&
                         "from-black/95 to-black/98 border-lime-600/50",
+                      activePlan && "min-h-[300px]",
                     )}>
                     <h2 className="text-2xl flex items-center gap-2 leading-6 font-semibold text-lime-200 justify-between">
                       {product.name}
 
                       {product?.name?.toLocaleLowerCase() ===
+                        activeProduct?.toLocaleLowerCase() && (
+                        <Badge className="bg-lime-700 text-white hover:bg-lime-600">
+                          Active
+                        </Badge>
+                      )}
+
+                      {product?.name?.toLocaleLowerCase() ===
                         mostPopularProduct?.toLocaleLowerCase() && (
-                        <Badge className="bg-lime-700 text-white">
+                        <Badge className="bg-lime-700 text-white hover:bg-lime-600">
                           Most Popular
                         </Badge>
                       )}
@@ -275,7 +321,7 @@ const PricingDialog = ({
                       price,
                       mostPopularProduct,
                       handleStripeCheckout,
-                      handleStripePortalRequest: () => Promise.resolve(),
+                      handleStripePortalRequest,
                     })}
                   </div>
                 </div>

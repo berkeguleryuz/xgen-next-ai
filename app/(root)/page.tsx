@@ -6,7 +6,9 @@ import { createClient } from "@/utils/supabase/server";
 
 export default async function Home() {
   const supabase = await createClient();
-  const [products] = await Promise.all([getProducts(supabase)]);
+  const [ products] = await Promise.all([
+    getProducts(supabase),
+  ]);
 
   // if (user) {
   //   return redirect("/dashboard");
