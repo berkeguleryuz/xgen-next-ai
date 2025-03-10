@@ -60,3 +60,39 @@ export async function logout(): Promise<void> {
   await supabase.auth.signOut();
   redirect("/login");
 }
+
+export async function updateProfile(values: {
+  fullName: string;
+}): Promise<AuthResponse> {
+  const supabase = await createClient();
+  const full_name = values.fullName;
+
+  const { data: profileData, error } = await supabase.auth.updateUser({
+    data: {
+      full_name,
+    },
+  });
+
+  return {
+    error: error?.message || "Something went wrong [updateProfile]",
+    success: !error,
+    data: profileData || null,
+  };
+}
+
+
+export async function resetPassword(values: {
+  email: string;
+}): Promise<AuthResponse> {
+  const supabase = await createClient();
+
+  const { data: resetPasswordData, error } = await supabase.auth.resetPasswordForEmail(
+    values.email,
+  );
+
+  return {
+    error: error?.message || "Something went wrong [resetPassword]",
+    success: !error,
+    data: resetPasswordData || null,
+  };
+}
