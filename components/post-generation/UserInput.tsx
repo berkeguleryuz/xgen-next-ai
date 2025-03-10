@@ -87,7 +87,7 @@ const UserInput = () => {
         values.model,
       );
 
-      setOutput(data);
+      setOutput(data || { data: [] });
       setLoading(false);
     } catch (error) {
       console.log(error);
