@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,32 +19,31 @@ import { cn } from "@/lib/utils";
 import { toast } from "react-hot-toast";
 import { LoaderCircle, Eye, EyeOff } from "lucide-react";
 import { redirect } from "next/navigation";
-import { login } from "@/utils/auth/auth-actions";
+import { changePassword } from "@/utils/auth/auth-actions";
 
 const passwordValidationRegex = new RegExp(
   "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
 );
 
-const formSchema = z.object({
-  password: z
-    .string()
-    .min(8, {
-      message: "Password must be at least 8 characters long.",
-    })
-    .regex(passwordValidationRegex, {
-      message:
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+const formSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, {
+        message: "Password must be at least 8 characters long.",
+      })
+      .regex(passwordValidationRegex, {
+        message:
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+      }),
+    confirmPassword: z.string({
+      required_error: "Confirm password is required.",
     }),
-  confirmPassword: z
-    .string()
-    .min(8, {
-      message: "Password must be at least 8 characters long.",
-    })
-    .regex(passwordValidationRegex, {
-      message:
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-    }),
-});
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Passwords do not match.",
+  });
 
 const ResetPasswordForm = ({ className }: { className?: string }) => {
   const [loading, setLoading] = useState(false);
@@ -59,20 +59,22 @@ const ResetPasswordForm = ({ className }: { className?: string }) => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    toast.loading("Signing up...");
+    toast.loading("Changing password...");
 
-    const formData = new FormData();
-    formData.append("password", values.password);
-    formData.append("confirmPassword", values.confirmPassword);
+    try {
+      const { success, error } = await changePassword(values.password);
 
-    const { success, error } = await login(formData);
-
-    if (!success) {
+      if (!success) {
+        toast.error(String(error) || "Something went wrong");
+      } else {
+        toast.success("Password changed successfully!");
+        setLoading(false);
+        redirect("/login");
+      }
+    } catch (error) {
       toast.error(String(error) || "Something went wrong");
-    } else {
-      toast.success("Login successful!");
+    } finally {
       setLoading(false);
-      redirect("/dashboard");
     }
   }
 
@@ -85,7 +87,7 @@ const ResetPasswordForm = ({ className }: { className?: string }) => {
         <p className="text-sm text-neutral-300">
           Enter your new password below.
         </p>
-      </fieldset>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -93,24 +95,7 @@ const ResetPasswordForm = ({ className }: { className?: string }) => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="********"
-                    {...field}
-                    className="text-white font-semibold placeholder:text-neutral-300 bg-lime-500/10 border-none outline-none ring-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>New Password</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -131,6 +116,44 @@ const ResetPasswordForm = ({ className }: { className?: string }) => {
                     </button>
                   </div>
                 </FormControl>
+                <FormDescription className="text-xs text-neutral-300">
+                  Enter a strong password with at least 8 characters, one
+                  uppercase letter, one lowercase letter, one number, and one
+                  special character.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm New Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="********"
+                      {...field}
+                      className="text-white font-semibold placeholder:text-neutral-300 bg-lime-500/10 border-none outline-none ring-0 focus:ring-0 focus:ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-300 hover:text-white transition-colors">
+                      {showPassword ? (
+                        <EyeOff className="text-lime-700 h-4 w-4" />
+                      ) : (
+                        <Eye className="text-lime-700 h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormDescription className="text-xs text-neutral-300">
+                  Confirm your new password.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -142,11 +165,15 @@ const ResetPasswordForm = ({ className }: { className?: string }) => {
             {loading ? (
               <LoaderCircle className="w-4 h-4 animate-spin" />
             ) : (
-              "Submit"
+              "Change Password"
             )}
           </Button>
+          <div className="text-sm text-neutral-300">
+            Make sure to remember your new password.
+          </div>
         </form>
       </Form>
+      </fieldset>
     </div>
   );
 };
