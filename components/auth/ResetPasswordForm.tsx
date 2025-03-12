@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useId } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import toast from "react-hot-toast";
+import { resetPassword } from "@/utils/auth/auth-actions";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,8 +31,34 @@ const ResetPasswordForm = ({ className }: { className?: string }) => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  const toastId = useId();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    toast.loading("Sending password reset email...", {
+      id: toastId,
+    });
+
+    try {
+      const { success, error } = await resetPassword({
+        email: values?.email || "",
+      });
+      if (!success) {
+        toast.error(error, {
+          id: toastId,
+        });
+      } else {
+        toast.success("Password reset email sent", {
+          id: toastId,
+        });
+      }
+    } catch (error: unknown) {
+      console.error(error);
+      toast.error(
+        error instanceof Error ? error.message : "Something went wrong",
+        {
+          id: toastId,
+        },
+      );
+    }
   }
 
   return (

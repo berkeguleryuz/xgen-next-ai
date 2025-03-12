@@ -80,19 +80,33 @@ export async function updateProfile(values: {
   };
 }
 
-
 export async function resetPassword(values: {
   email: string;
 }): Promise<AuthResponse> {
   const supabase = await createClient();
 
-  const { data: resetPasswordData, error } = await supabase.auth.resetPasswordForEmail(
-    values.email,
-  );
+  const { data: resetPasswordData, error } =
+    await supabase.auth.resetPasswordForEmail(values.email);
 
   return {
     error: error?.message || "Something went wrong [resetPassword]",
     success: !error,
     data: resetPasswordData || null,
+  };
+}
+
+export async function changePassword(
+  newPassword: string,
+): Promise<AuthResponse> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.updateUser({
+    password: newPassword,
+  });
+
+  return {
+    error: error?.message || "Something went wrong [changePassword]",
+    success: !error,
+    data: data || null,
   };
 }
