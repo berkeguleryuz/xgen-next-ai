@@ -30,7 +30,7 @@ const RecentImages = ({ images }: RecentImagesProps) => {
           <CardTitle>Recent Images</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
-          <p className="text-xl font-bold mt-12">No recent images</p>
+          <p className="text-xl font-bold mt-12">No recent images</p> 
         </CardContent>
       </Card>
     );
