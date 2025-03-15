@@ -20,13 +20,18 @@ const RecentModels = ({ models }: RecentModelsProps) => {
           ) : (
             models.map((model) => {
               return (
-                <div key={model.id} className="flex items-center justify-between space-x-4">
+                <div
+                  key={model.id}
+                  className="flex items-center justify-between space-x-4">
                   <div>
                     <p className="text-sm font-medium">{model.model_name}</p>
                     <p className="text-xs text-white/70">{model.gender}</p>
                   </div>
-                  <Badge className="bg-lime-500/10 border-lime-500/20">
-                    {model.training_status}
+                  <Badge
+                    className={getStatusVariant(
+                      model.training_status ?? "pending",
+                    )}>
+                    {model.training_status ?? "pending"}
                   </Badge>
                 </div>
               );
@@ -39,3 +44,19 @@ const RecentModels = ({ models }: RecentModelsProps) => {
 };
 
 export default RecentModels;
+
+function getStatusVariant(status: string) {
+  switch (status) {
+    case "succeed":
+      return "bg-lime-500/10 border-lime-500/20";
+    case "processing":
+    case "starting":
+      return "bg-yellow-500/10 border-yellow-500/20";
+    case "failed":
+    case "canceled":
+      return "bg-red-500/10 border-red-500/20";
+    default:
+      return "bg-gray-500/10 border-gray-500/20";
+      break;
+  }
+}

@@ -1,23 +1,29 @@
-// import { Tables } from "@/database.types";
+import { Tables } from "@/database.types";
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Carousel,
   CarouselContent,
-//   CarouselItem,
+  CarouselItem,
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-// import { cn } from "@/lib/utils";
-// import Image from "next/image";
+import { cn } from "@/lib/utils";
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 
+interface RecentImagesProps {
+  images: Array<
+    Tables<"generated_images"> & {
+      url?: string;
+    }
+  >;
+}
 
-
-const RecentImages = () => {
-  if (true) {
+const RecentImages = ({ images }: RecentImagesProps) => {
+  if (images.length === 0) {
     return (
       <Card className="bg-lime-500/10 text-white border-lime-500/20 col-span-3">
         <CardHeader>
@@ -37,7 +43,7 @@ const RecentImages = () => {
       <CardContent className="space-y-4">
         <Carousel className="w-full">
           <CarouselContent>
-            {/* {images.map((image) => (
+            {images.map((image) => (
               <CarouselItem
                 key={image.id}
                 className="md:basis-1/2 lg:basis-1/3">
@@ -50,7 +56,7 @@ const RecentImages = () => {
                         : "aspect-square",
                     )}>
                     <Image
-                      src={""}
+                      src={image.url || ""}
                       alt={image.prompt || ""}
                       width={image.width || 100}
                       height={image.height || 100}
@@ -62,7 +68,7 @@ const RecentImages = () => {
                   </p>
                 </div>
               </CarouselItem>
-            ))} */}
+            ))}
           </CarouselContent>
           <CarouselPrevious className="left-2 bg-black" />
           <CarouselNext className="right-2 bg-black" />
