@@ -35,7 +35,7 @@ export default async function DashboardPage() {
       />
 
       <div className="grid gap-6 grid-cols-4 mt-4">
-        <RecentImages images={images?.slice(0, 3) ?? []} />
+        <RecentImages images={images?.slice(0, 6) ?? []} />
         <div className="h-full flex flex-col space-y-6">
           <QuickActions />
           <RecentModels models={models ?? []} />
