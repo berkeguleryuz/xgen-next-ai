@@ -30,7 +30,7 @@ const RecentImages = ({ images }: RecentImagesProps) => {
           <CardTitle>Recent Images</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-center">
-          <p className="text-xl font-bold mt-12">No recent images</p> 
+          <p className="text-xl font-bold mt-12">No recent images</p>
         </CardContent>
       </Card>
     );
@@ -41,12 +41,17 @@ const RecentImages = ({ images }: RecentImagesProps) => {
         <CardTitle>Recent Images</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Carousel className="w-full">
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full">
           <CarouselContent>
             {images.map((image) => (
               <CarouselItem
                 key={image.id}
-                className="md:basis-1/2 lg:basis-1/3">
+                className="basis-full sm:basis-1/2 lg:basis-1/3">
                 <div className="space-y-2">
                   <div
                     className={cn(
@@ -74,7 +79,7 @@ const RecentImages = ({ images }: RecentImagesProps) => {
           <CarouselNext className="right-2 bg-black" />
         </Carousel>
         <div className="flex justify-end">
-          <Link href={"/gallery"}>
+          <Link href={"/my-generations"}>
             <Button className="bg-lime-500/10 text-white border-lime-500/20 hover:bg-lime-500/20">
               View All <ArrowRight className="w-4 h-4" />
             </Button>
