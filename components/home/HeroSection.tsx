@@ -1,7 +1,9 @@
 import Link from "next/link";
 import React from "react";
-import { AnimatedGradientText } from "./ui/animated-gradient-tsx";
+import { AnimatedGradientText } from "../ui/animated-gradient-tsx";
 import { StarsIcon } from "lucide-react";
+
+
 
 const HeroSection = () => {
   return (
@@ -13,8 +15,8 @@ const HeroSection = () => {
           </h1>
         </AnimatedGradientText>
       </div>
-      <h1 className="text-7xl font-bold">Welcome to xGen</h1>
-      <p className="text-base font-light text-lime-50">
+      <h1 className="lg:text-7xl text-4xl mx-auto text-center font-bold">Welcome to xGen</h1>
+      <p className="text-base lg:text-xl mx-auto text-center font-light px-4 text-lime-50">
         The AI-powered platform for creating and managing your social media
         accounts.
       </p>

@@ -1,4 +1,6 @@
-import HeroSection from "@/components/HeroSection";
+import BackHero from "@/components/home/BackHero";
+import FeaturesSection from "@/components/home/FeaturesSection";
+import HeroSection from "@/components/home/HeroSection";
 import PricingSection from "@/components/PricingSection";
 import { getProducts
  } from "@/utils/supabase/queries";
@@ -16,9 +18,11 @@ export default async function Home() {
   // }
 
   return (
-    <main className="relative h-full w-full text-white">
+    <main className="relative z-0 h-full w-full text-white">
       <HeroSection />
       <PricingSection products={products ?? []} />
+      <BackHero />
+      <FeaturesSection />
     </main>
   );
 }
