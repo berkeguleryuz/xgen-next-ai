@@ -20,7 +20,7 @@ export function AnimatedGradientText({
       )}
       {...props}>
       <div
-        className={`absolute inset-0 block h-full w-full animate-gradient bg-gradient-to-r from-[#efefef]/50 via-[#5172da]/50 to-[#ffaa40]/50 bg-[length:var(--bg-size)_100%] p-[1px] ![mask-composite:subtract] [border-radius:inherit] [mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)]`}
+        className={`absolute inset-0 block h-full w-full animate-gradient bg-gradient-to-r from-lime-500/50 via-lime-200/50 to-lime-500/50 bg-[length:var(--bg-size)_100%] p-[1px] ![mask-composite:subtract] [border-radius:inherit] [mask:linear-gradient(#fff_0_0)_content-box,linear-gradient(#fff_0_0)]`}
       />
 
       {children}
