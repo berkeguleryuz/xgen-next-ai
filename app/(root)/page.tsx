@@ -2,16 +2,14 @@ import BackHero from "@/components/home/BackHero";
 import FeaturesSection from "@/components/home/FeaturesSection";
 import HeroSection from "@/components/home/HeroSection";
 import PricingSection from "@/components/PricingSection";
-import { getProducts
- } from "@/utils/supabase/queries";
+import FAQSection from "@/components/home/FAQSection";
+import Footer from "@/components/home/Footer";
+import { getProducts } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
-
 
 export default async function Home() {
   const supabase = await createClient();
-  const [products] = await Promise.all([
-    getProducts(supabase),
-  ]);
+  const [products] = await Promise.all([getProducts(supabase)]);
 
   // if (user) {
   //   return redirect("/dashboard");
@@ -23,6 +21,8 @@ export default async function Home() {
       <PricingSection products={products ?? []} />
       <BackHero />
       <FeaturesSection />
+      <FAQSection />
+      <Footer />
     </main>
   );
 }
