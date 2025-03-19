@@ -6,6 +6,7 @@ import FAQSection from "@/components/home/FAQSection";
 import Footer from "@/components/home/Footer";
 import { getProducts } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server";
+import CallToAction from "@/components/home/CallToAction";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -22,6 +23,7 @@ export default async function Home() {
       <BackHero />
       <FeaturesSection />
       <FAQSection />
+      <CallToAction />
       <Footer />
     </main>
   );
