@@ -9,9 +9,11 @@ interface RecentModelsProps {
 
 const RecentModels = ({ models }: RecentModelsProps) => {
   return (
-    <Card className="bg-lime-500/10 border-lime-500/20 text-white">
-      <CardHeader>
-        <CardTitle>Recent Models</CardTitle>
+    <Card className="bg-gradient-to-br md:w-1/3 w-full from-black/40 to-black/20 border-lime-500/20 text-white backdrop-blur-sm">
+      <CardHeader className="border-b border-lime-500/20">
+        <CardTitle className="text-xl font-semibold bg-gradient-to-r from-lime-500 to-lime-300 bg-clip-text text-transparent">
+          Recent Models
+        </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="space-y-4">
@@ -22,7 +24,7 @@ const RecentModels = ({ models }: RecentModelsProps) => {
               return (
                 <div
                   key={model.id}
-                  className="flex items-center justify-between space-x-4">
+                  className="flex items-center justify-between space-x-4 py-4">
                   <div>
                     <p className="text-sm font-medium">{model.model_name}</p>
                     <p className="text-xs text-white/70">{model.gender}</p>
