@@ -135,7 +135,7 @@ const ImageUserInput = ({ userModels, model_id }: ImageUserInputProps) => {
     setLoading(false);
   }
   return (
-    <div className="bg-transparent border border-lime-500/10 shadow-inner shadow-lime-500/10 transition-all duration-300 p-4 rounded-lg">
+    <div className="bg-black/20 hover:bg-black/30 transition-all duration-300 border-lime-500/20 text-white backdrop-blur-sm p-4 rounded-lg h-full">
       <h2 className="text-3xl font-bold pb-2 decoration-dashed decoration-lime-500">
         User Input
       </h2>
@@ -143,7 +143,7 @@ const ImageUserInput = ({ userModels, model_id }: ImageUserInputProps) => {
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="grid w-full items-start gap-6">
-          <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
+          <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/20 p-4 bg-black/20 h-full flex-1">
             <legend className="text-lg font-bold text-right">
               Model Settings
             </legend>

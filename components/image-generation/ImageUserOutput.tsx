@@ -40,7 +40,7 @@ const ImageUserOutput = () => {
   };
 
   return (
-    <div className="relative border border-lime-500/10 shadow-inner shadow-lime-500/10 transition-all duration-300 p-4 rounded-lg">
+    <div className="bg-black/20 hover:bg-black/30 transition-all duration-300 border-lime-500/20 text-white backdrop-blur-sm p-4 rounded-lg h-full">
       <BorderBeam
         duration={7}
         size={111}
@@ -48,7 +48,7 @@ const ImageUserOutput = () => {
       />
       <div className="relative flex flex-col gap-4">
         <div>
-          <fieldset className="grid gap-6 rounded-[8px] border bg-lime-500/10 min-h-[675px] border-lime-500/10 p-4">
+          <fieldset className="grid gap-6 rounded-[8px] border bg-black/20  min-h-[675px] border-lime-500/20 p-4">
             <legend className="text-lg font-bold">Model Output</legend>
             {images.length > 0 ? (
               <div className="relative flex flex-col items-center justify-center h-[600px] w-full">

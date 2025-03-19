@@ -1,17 +1,9 @@
 "use client";
 import { Database } from "@/database.types";
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
 import Link from "next/link";
 import { formatDistance } from "date-fns";
 import { Clock, Loader2, PersonStanding, Trash, XIcon } from "lucide-react";
-import { Separator } from "../ui/separator";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,7 +32,6 @@ interface ModelsListProps {
 
 const ModelsList = ({ models }: ModelsListProps) => {
   const { data } = models;
-
   const router = useRouter();
 
   const handleDeleteModel = async (
@@ -65,100 +56,100 @@ const ModelsList = ({ models }: ModelsListProps) => {
   if (data?.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-[80vh] gap-2">
-        <p className="text-2xl font-bold">No models created yet</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-2xl font-bold text-lime-200">
+          No models created yet
+        </p>
+        <p className="text-sm text-lime-300/70">
           Train a new model to get started
         </p>
         <Link
           href="/train-model"
-          className="text-lime-500 border border-lime-500/30 px-4 py-2 rounded-md hover:text-lime-400 hover:bg-lime-500/10 transition-all duration-300">
+          className="text-lime-200 border border-lime-500/20 px-4 py-2 rounded-md hover:text-lime-400 hover:bg-black/20 transition-all duration-300">
           Train a new model
         </Link>
       </div>
     );
   }
-  return (
-    <div className="grid grid-cols-3 gap-6">
-      {data?.map((model) => (
-        <Card
-          key={model.id}
-          className="bg-lime-500/10 border border-lime-500/20 text-white">
-          <CardHeader>
-            <CardTitle>
-              <div className="flex justify-between items-center gap-2">
-                {model.model_name}
-                <div className="flex items-center gap-2">
-                  <AlertDialog>
-                    <AlertDialogTrigger className="hover:text-red-500 transition-all duration-300 hover:bg-red-500/10 p-1 px-2 rounded-md">
-                      <Trash className="w-4 h-4" />
-                    </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-lime-500/10 border border-lime-500/20 text-white">
-                      <AlertDialogHeader>
-                        <AlertDialogTitle className="text-lime-200">
-                          Are you sure you want to delete this model?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription className="text-white">
-                          This action cannot be undone. This will permanently
-                          delete your model and remove your data from our
-                          servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel className="text-white bg-lime-500/10 border border-lime-500/20 hover:bg-lime-500/50 transition-all duration-300 hover:text-white">
-                          Cancel
-                        </AlertDialogCancel>
-                        <AlertDialogAction
-                          className="text-white bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all duration-300"
-                          onClick={() =>
-                            handleDeleteModel(
-                              model.id,
-                              model.model_id || "",
-                              model.version || "",
-                            )
-                          }>
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
 
-                  <div className="flex items-end gap-2">
-                    {model.training_status === "succeeded" ? (
-                      <div className="p-1 text-xs bg-lime-500/40 rounded-md px-2">
-                        Ready to use
-                      </div>
-                    ) : model.training_status === "canceled" ||
-                      model.training_status === "failed" ? (
-                      <div className="p-1 text-xs bg-red-500/40 rounded-md px-2 flex items-center gap-2">
-                        <XIcon className="w-4 h-4" />
-                        {model.training_status}
-                      </div>
-                    ) : (
-                      <div className="p-1 text-xs bg-lime-500/40 rounded-md px-2 flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        Training
-                      </div>
-                    )}
-                  </div>
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {data?.map((model) => (
+        <div
+          key={model.id}
+          className="bg-black/20 border border-lime-500/20 rounded-lg overflow-hidden hover:bg-black/30 transition-all duration-300">
+          <div className="p-6">
+            <div className="flex justify-between items-center gap-2 mb-2">
+              <h3 className="text-xl font-semibold text-lime-200">
+                {model.model_name}
+              </h3>
+              <div className="flex items-center gap-2">
+                <AlertDialog>
+                  <AlertDialogTrigger className="hover:text-red-500 transition-all duration-300 hover:bg-red-500/10 p-1 px-2 rounded-md">
+                    <Trash className="w-4 h-4" />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="bg-black/90 border border-lime-500/20 text-white">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle className="text-lime-200">
+                        Are you sure you want to delete this model?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription className="text-lime-300/70">
+                        This action cannot be undone. This will permanently
+                        delete your model and remove your data from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel className="text-white bg-black/20 border border-lime-500/20 hover:bg-black/30 transition-all duration-300 hover:text-white">
+                        Cancel
+                      </AlertDialogCancel>
+                      <AlertDialogAction
+                        className="text-white bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all duration-300"
+                        onClick={() =>
+                          handleDeleteModel(
+                            model.id,
+                            model.model_id || "",
+                            model.version || "",
+                          )
+                        }>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+
+                <div className="flex items-end gap-2">
+                  {model.training_status === "succeeded" ? (
+                    <div className="p-1 text-xs bg-lime-500/20 rounded-md px-2 text-lime-200">
+                      Ready to use
+                    </div>
+                  ) : model.training_status === "canceled" ||
+                    model.training_status === "failed" ? (
+                    <div className="p-1 text-xs bg-red-500/20 rounded-md px-2 flex items-center gap-2 text-red-200">
+                      <XIcon className="w-4 h-4" />
+                      {model.training_status}
+                    </div>
+                  ) : (
+                    <div className="p-1 text-xs bg-lime-500/20 rounded-md px-2 flex items-center gap-2 text-lime-200">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Training
+                    </div>
+                  )}
                 </div>
               </div>
-            </CardTitle>
-            <CardDescription className="text-lime-300">
+            </div>
+            <p className="text-sm text-lime-300/70 mb-6">
               Created{" "}
               {formatDistance(model.created_at, new Date(), {
                 addSuffix: true,
               })}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="w-full flex items-center justify-center gap-2">
-              <div className="text-lime-200 border border-lime-500/20 rounded-md bg-lime-500/10 p-4 w-full flex flex-col items-center justify-center gap-3">
-                <div className="flex items-center gap-2">
-                  <PersonStanding className="w-5 h-5" />
-                  <p className="text-lime-200 text-base font-semibold">Type</p>
+            </p>
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="bg-black/20 border border-lime-500/20 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <PersonStanding className="w-5 h-5 text-lime-200" />
+                  <p className="text-lime-200 text-sm font-medium">Type</p>
                 </div>
-                <Separator className="w-full bg-lime-500/20" />
-                <p className="text-white text-sm font-normal">
+                <p className="text-lime-300/70 text-sm">
                   {model.gender?.toLowerCase() === "male"
                     ? "Male"
                     : model.gender?.toLowerCase() === "female"
@@ -167,21 +158,19 @@ const ModelsList = ({ models }: ModelsListProps) => {
                 </p>
               </div>
 
-              <div className="text-lime-200 border border-lime-500/20 rounded-md bg-lime-500/10 p-4 w-full flex flex-col items-center justify-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  <p className="text-lime-200 text-base font-semibold whitespace-nowrap">
+              <div className="bg-black/20 border border-lime-500/20 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-5 h-5 text-lime-200" />
+                  <p className="text-lime-200 text-sm font-medium">
                     Training Time
                   </p>
                 </div>
-                <Separator className="w-full bg-lime-500/20" />
-                <p className="text-white text-sm font-normal">
-                  {Math.round(Number(model.training_time) / 60 || 0)}
+                <p className="text-lime-300/70 text-sm">
+                  {Math.round(Number(model.training_time) / 60 || 0)} minutes
                 </p>
               </div>
             </div>
-          </CardContent>
-          <div className="p-6 pt-0">
+
             <Link
               href={
                 model.training_status === "succeeded"
@@ -189,23 +178,21 @@ const ModelsList = ({ models }: ModelsListProps) => {
                   : "#"
               }
               className={cn(
-                "inline-flex w-full justify-center items-center gap-2 py-2 px-4 rounded-md bg-lime-500/10 border border-lime-500/20 text-lime-200 hover:text-lime-400 hover:bg-lime-500/20 transition-all duration-300",
+                "inline-flex w-full justify-center items-center gap-2 py-2 px-4 rounded-md bg-lime-500/10 border border-lime-500/20 text-lime-200  hover:bg-lime-500/20 transition-all duration-300",
                 model.training_status !== "succeeded" &&
                   "pointer-events-none opacity-50",
               )}>
-              <div className={``}>
-                {model.training_status === "succeeded" ? (
-                  <span>Generate Image</span>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Not ready yet</span>
-                  </div>
-                )}
-              </div>
+              {model.training_status === "succeeded" ? (
+                <span>Generate Image</span>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Not ready yet</span>
+                </div>
+              )}
             </Link>
           </div>
-        </Card>
+        </div>
       ))}
     </div>
   );

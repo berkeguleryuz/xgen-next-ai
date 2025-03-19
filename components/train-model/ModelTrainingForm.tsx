@@ -122,8 +122,8 @@ const ModelTrainingForm = () => {
     <div className="flex flex-col gap-4 max-w-2xl mx-auto">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
-            <legend className="text-lg font-bold text-center">
+          <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/20 p-4 bg-black/20">
+            <legend className="text-2xl font-bold text-center bg-gradient-to-r from-lime-500 to-lime-300 bg-clip-text text-transparent">
               Model Settings
             </legend>
             <div className="flex flex-row justify-between gap-4">

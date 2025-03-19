@@ -96,18 +96,18 @@ const UserInput = () => {
   }
 
   return (
-    <div className="bg-transparent border border-lime-500/10 shadow-inner shadow-lime-500/10 transition-all duration-300 p-4 rounded-lg">
-      <h2 className="text-3xl font-bold pb-2 decoration-dashed decoration-lime-500">
+    <div className="bg-black/20 hover:bg-black/30 transition-all duration-300 border-lime-500/20 text-white backdrop-blur-sm p-4 rounded-lg">
+      <h2 className="text-3xl font-bold pb-2 bg-gradient-to-r from-lime-500 to-lime-300 bg-clip-text text-transparent">
         User Input
       </h2>
-      <Separator className="my-4 border-lime-500/10 divide-dashed decoration-dashed dashed decoration-slice" />
+      <Separator className="my-4 bg-lime-500/20" />
       <div className="relative flex flex-col gap-4">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
             className="grid w-full items-start gap-6">
-            <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
-              <legend className="text-lg font-bold text-right">
+            <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/20 p-4 bg-black/20">
+              <legend className="text-lg font-bold text-right bg-gradient-to-r from-lime-500 to-lime-300 bg-clip-text text-transparent">
                 Model Settings
               </legend>
               <div className="grid gap-3">
@@ -201,8 +201,8 @@ const UserInput = () => {
               </div>
             </fieldset>
 
-            <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/10 p-4 bg-lime-500/10">
-              <legend className="text-right text-lg font-bold">
+            <fieldset className="grid gap-6 rounded-[8px] border border-lime-500/20 p-4 bg-black/20">
+              <legend className="text-right text-lg font-bold bg-gradient-to-r from-lime-500 to-lime-300 bg-clip-text text-transparent">
                 User Settings
               </legend>
 
