@@ -24,8 +24,8 @@ const CallToAction = () => {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black">
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(132,204,22,0.1),transparent_70%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_24%,rgba(132,204,22,0.01)_76%,transparent_52%)] bg-[length:20px_20px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(132,204,22,0.4),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_48%,rgba(132,204,22,0.1)_50%,transparent_35%)] bg-[length:20px_20px]" />
       </div>
 
       <div className="container mx-auto px-2 relative z-10">
@@ -62,7 +62,7 @@ const CallToAction = () => {
           </h2>
 
           <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of creators who are already using AI-X Generator to
+            Join thousands of creators who are already using xGen to
             create, schedule, and manage their content with ease.
           </p>
 
