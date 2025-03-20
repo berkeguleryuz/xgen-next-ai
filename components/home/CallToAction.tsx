@@ -62,7 +62,7 @@ const CallToAction = () => {
           </h2>
 
           <p className="text-xl text-white/70 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Join thousands of creators who are already using AI-X Generator to
+            Join thousands of creators who are already using xGen to
             create, schedule, and manage their content with ease.
           </p>
 
