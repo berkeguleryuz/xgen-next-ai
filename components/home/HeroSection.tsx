@@ -5,7 +5,7 @@ import { StarsIcon } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-[calc(100vh-100px)]">
+    <div className="flex  flex-col items-center justify-center h-[calc(100vh-100px)]">
       <div>
         <AnimatedGradientText className="px-6">
           <h1 className="text-sm font-bold flex gap-2 items-center">
