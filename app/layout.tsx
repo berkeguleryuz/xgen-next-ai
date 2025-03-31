@@ -1,3 +1,4 @@
+// Main yedek 31.03.2025
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
